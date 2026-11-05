@@ -14,3 +14,4 @@ ACTION=="add|change", KERNEL=="sd[a-z]*|vd[a-z]*|mmcblk[0-9]*", ATTR{queue/rotat
 # NVMe High-Performance Drives
 ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/rotational}=="0", \
     ATTR{queue/scheduler}="kyber"
+

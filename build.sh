@@ -56,6 +56,9 @@ mkarchiso -v \
 # If running inside WSL, mirror output ISO to Windows dist directory safely
 if [[ -d "/mnt/c/Users/CorSec/Documents/personal/EnercoOS" ]] && [[ "${SCRIPT_DIR}" != "/mnt/c/"* ]]; then
     echo "[STEP 5/5] Mirroring output ISO to Windows host workspace..."
+    # Drop caches to reclaim RAM from mksquashfs before drvfs transfer
+    sync
+    echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
     mkdir -p "/mnt/c/Users/CorSec/Documents/personal/EnercoOS/dist"
     for iso_file in "${OUT_DIR}"/*.iso; do
         if [[ -f "${iso_file}" ]]; then
