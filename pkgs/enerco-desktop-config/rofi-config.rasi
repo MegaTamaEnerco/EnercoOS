@@ -1,0 +1,93 @@
+configuration {
+    modi: "drun,run,window";
+    lines: 7;
+    font: "Noto Sans 13";
+    show-icons: true;
+    icon-theme: "Papirus";
+    terminal: "kitty";
+    drun-display-format: "{icon} {name}";
+    location: 0;
+    disable-history: false;
+    hide-scrollbar: true;
+    display-drun: "   Spotlight ";
+    display-run: "   Run ";
+    display-window: "   Window ";
+}
+
+@theme "/dev/null"
+
+* {
+    bg: rgba(22, 27, 34, 0.85);
+    bg-alt: rgba(255, 255, 255, 0.08);
+    bg-selected: rgba(0, 113, 227, 0.85);
+    fg: #f0f6fc;
+    fg-dim: #8b949e;
+    border-color: rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    background-color: transparent;
+    text-color: @fg;
+}
+
+window {
+    transparency: "real";
+    background-color: @bg;
+    border: 1px solid;
+    border-color: @border-color;
+    border-radius: 16px;
+    width: 640px;
+    padding: 16px;
+}
+
+mainbox {
+    children: [ inputbar, listview ];
+    spacing: 12px;
+}
+
+inputbar {
+    children: [ prompt, entry ];
+    background-color: @bg-alt;
+    border-radius: 10px;
+    padding: 10px 14px;
+}
+
+prompt {
+    font-weight: bold;
+    color: #40c8e0;
+    margin-right: 8px;
+}
+
+entry {
+    placeholder: "Search applications, ERP, settings...";
+    placeholder-color: @fg-dim;
+}
+
+listview {
+    columns: 1;
+    lines: 7;
+    cycle: true;
+    dynamic: true;
+    scrollbar: false;
+    layout: vertical;
+    spacing: 4px;
+}
+
+element {
+    orientation: horizontal;
+    border-radius: 8px;
+    padding: 8px 12px;
+    spacing: 12px;
+}
+
+element-icon {
+    size: 24px;
+}
+
+element-text {
+    vertical-align: 0.5;
+}
+
+element selected {
+    background-color: @bg-selected;
+    color: #ffffff;
+}
+

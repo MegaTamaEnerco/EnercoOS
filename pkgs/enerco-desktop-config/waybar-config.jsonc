@@ -1,0 +1,106 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 34,
+    "spacing": 6,
+    "modules-left": [
+        "custom/enerco-menu",
+        "custom/ws1",
+        "custom/ws2",
+        "custom/ws3",
+        "custom/ws4",
+        "custom/app-files",
+        "custom/app-term",
+        "custom/app-browser",
+        "custom/app-installer"
+    ],
+    "modules-center": [
+        "clock"
+    ],
+    "modules-right": [
+        "tray",
+        "network",
+        "pulseaudio",
+        "battery",
+        "custom/power"
+    ],
+    "custom/enerco-menu": {
+        "format": "⚡ EnercoOS",
+        "tooltip": false,
+        "on-click": "rofi -show drun"
+    },
+    "custom/ws1": {
+        "format": " 1 ",
+        "tooltip": false,
+        "on-click": "hyprctl dispatch workspace 1"
+    },
+    "custom/ws2": {
+        "format": " 2 ",
+        "tooltip": false,
+        "on-click": "hyprctl dispatch workspace 2"
+    },
+    "custom/ws3": {
+        "format": " 3 ",
+        "tooltip": false,
+        "on-click": "hyprctl dispatch workspace 3"
+    },
+    "custom/ws4": {
+        "format": " 4 ",
+        "tooltip": false,
+        "on-click": "hyprctl dispatch workspace 4"
+    },
+    "custom/app-files": {
+        "format": "Files",
+        "tooltip": false,
+        "on-click": "thunar"
+    },
+    "custom/app-term": {
+        "format": "Terminal",
+        "tooltip": false,
+        "on-click": "kitty"
+    },
+    "custom/app-browser": {
+        "format": "MTERP ERP",
+        "tooltip": false,
+        "on-click": "chromium --app=https://mterp.internal --ozone-platform=wayland"
+    },
+    "custom/app-installer": {
+        "format": "Install OS",
+        "tooltip": false,
+        "on-click": "/usr/local/bin/enerco-installer"
+    },
+    "clock": {
+        "format": "{:%a %b %e  %I:%M %p}",
+        "tooltip": false
+    },
+    "network": {
+        "format-wifi": "WiFi: {essid}",
+        "format-ethernet": "LAN: {ipaddr}",
+        "format-linked": "LAN: Connected",
+        "format-disconnected": "Net: Off",
+        "tooltip": false,
+        "on-click": "kitty -e nmtui"
+    },
+    "pulseaudio": {
+        "format": "Vol: {volume}%",
+        "format-muted": "Vol: Muted",
+        "on-click": "pavucontrol"
+    },
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "Bat: {capacity}%",
+        "format-charging": "Bat: {capacity}% (AC)"
+    },
+    "tray": {
+        "icon-size": 16,
+        "spacing": 8
+    },
+    "custom/power": {
+        "format": "Exit",
+        "tooltip": false,
+        "on-click": "hyprctl dispatch exit"
+    }
+}
