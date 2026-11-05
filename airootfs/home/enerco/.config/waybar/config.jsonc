@@ -7,7 +7,7 @@
         "spacing": 4,
         "modules-left": [
             "custom/apple-menu",
-            "hyprland/window",
+            "custom/active-app",
             "custom/menu-file",
             "custom/menu-edit",
             "custom/menu-view",
@@ -34,18 +34,10 @@
             "tooltip-format": "PT Mega Tama Enerco (Super+Space)",
             "on-click": "rofi -show drun"
         },
-        "hyprland/window": {
-            "format": "<b>{}</b>",
-            "window-rewrite": {
-                "class<kitty>": "Terminal",
-                "class<thunar>": "Finder",
-                "class<chromium>": "Safari",
-                "class<calamares>": "Install EnercoOS",
-                "class<pavucontrol>": "Sound Settings",
-                "class<gparted>": "Disk Utility"
-            },
-            "window-rewrite-default": "EnercoOS Enterprise Workstation",
-            "separate-outputs": true
+        "custom/active-app": {
+            "format": "<b>Finder</b>",
+            "tooltip": "Active Application",
+            "on-click": "thunar"
         },
         "custom/menu-file": {
             "format": "File",
@@ -70,22 +62,22 @@
             "on-click": "/usr/local/bin/enerco-welcome"
         },
         "custom/ws1": {
-            "format": "1",
+            "format": " 1 ",
             "tooltip": "Desktop 1",
             "on-click": "hyprctl dispatch workspace 1"
         },
         "custom/ws2": {
-            "format": "2",
+            "format": " 2 ",
             "tooltip": "Desktop 2",
             "on-click": "hyprctl dispatch workspace 2"
         },
         "custom/ws3": {
-            "format": "3",
+            "format": " 3 ",
             "tooltip": "Desktop 3",
             "on-click": "hyprctl dispatch workspace 3"
         },
         "custom/ws4": {
-            "format": "4",
+            "format": " 4 ",
             "tooltip": "Desktop 4",
             "on-click": "hyprctl dispatch workspace 4"
         },

@@ -21,7 +21,7 @@ local terminal    = "kitty"
 local fileManager = "thunar"
 local menu        = "rofi -show drun"
 
--- Enterprise Autostart Services (Delayed 500ms to guarantee Wayland socket readiness)
+-- Enterprise Autostart Services (Delayed 800ms to guarantee Wayland socket readiness)
 hl.timer(function ()
     hl.exec_cmd("pgrep -f polkit-gnome >/dev/null || /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &")
     hl.exec_cmd("pgrep -x swaybg >/dev/null || swaybg -i /usr/share/backgrounds/enerco-mac.png -m fill &")
@@ -33,7 +33,7 @@ hl.timer(function ()
     hl.exec_cmd("gsettings set org.gnome.desktop.interface font-name 'Inter 11' 2>/dev/null || true")
     hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true")
     hl.exec_cmd("gsettings set org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:' 2>/dev/null || true")
-end, { timeout = 500, type = "oneshot" })
+end, { timeout = 800, type = "oneshot" })
 
 -- Environment Variables
 hl.env("XCURSOR_THEME", "capitaine-cursors")
@@ -143,6 +143,7 @@ hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + space", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("chromium --app=https://mterp.internal --ozone-platform=wayland"))
 hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("/usr/local/bin/enerco-installer"))
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("killall waybar 2>/dev/null; waybar &"))
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 
 -- Navigation (Focus)
