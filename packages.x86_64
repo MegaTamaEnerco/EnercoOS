@@ -90,11 +90,13 @@ kvantum-qt5
 brightnessctl
 
 # Typography & Visual Aesthetics
+inter-font
 ttf-cascadia-code
 noto-fonts
 noto-fonts-emoji
 otf-font-awesome
 papirus-icon-theme
+capitaine-cursors
 
 # Enterprise ERP Runtime & Admin Tools
 chromium

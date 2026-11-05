@@ -1,89 +1,215 @@
+/* ==============================================================================
+ * EnercoOS macOS Tahoe Waybar Styling
+ * Architecture: Top Menubar + Floating Bottom Glass Dock
+ * ============================================================================== */
+
 * {
     border: none;
     border-radius: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Noto Sans", sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Noto Sans", sans-serif;
     font-size: 13px;
     font-weight: 500;
     min-height: 0;
 }
 
-window#waybar {
-    background-color: rgba(22, 27, 34, 0.85);
+/* ==============================================================================
+ * TOP MENUBAR
+ * ============================================================================== */
+
+window#waybar.menubar {
+    background-color: rgba(18, 22, 32, 0.78);
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    color: #f0f6fc;
+    color: #f5f5f7;
 }
 
-#custom-enerco-menu {
+#custom-apple-menu {
     font-weight: 700;
-    padding: 0 10px;
-    color: #58a6ff;
     font-size: 13px;
+    padding: 0 10px;
+    margin-right: 2px;
+    color: #58a6ff;
+}
+
+#custom-apple-menu:hover {
+    color: #79c0ff;
+}
+
+#window {
+    font-weight: 700;
+    font-size: 13px;
+    color: #ffffff;
+    padding: 0 8px;
+    margin-right: 6px;
+}
+
+#custom-menu-file,
+#custom-menu-edit,
+#custom-menu-view,
+#custom-menu-window,
+#custom-menu-help {
+    color: #a0aec0;
+    padding: 0 7px;
+    border-radius: 5px;
+    margin: 3px 1px;
+    transition: all 0.15s ease;
+}
+
+#custom-menu-file:hover,
+#custom-menu-edit:hover,
+#custom-menu-view:hover,
+#custom-menu-window:hover,
+#custom-menu-help:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
 }
 
 #custom-ws1,
 #custom-ws2,
 #custom-ws3,
 #custom-ws4 {
-    padding: 0 7px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 0 8px;
+    margin: 4px 2px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
     color: #8b949e;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
-    margin: 4px 1px;
+    transition: all 0.15s ease;
 }
 
 #custom-ws1:hover,
 #custom-ws2:hover,
 #custom-ws3:hover,
 #custom-ws4:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
-}
-
-#custom-app-files,
-#custom-app-term,
-#custom-app-browser,
-#custom-app-installer {
-    padding: 0 8px;
-    margin: 4px 2px;
-    border-radius: 5px;
-    background: rgba(255, 255, 255, 0.07);
-    color: #e6edf3;
-}
-
-#custom-app-files:hover,
-#custom-app-term:hover,
-#custom-app-browser:hover,
-#custom-app-installer:hover {
-    background: rgba(0, 113, 227, 0.7);
+    background: rgba(0, 122, 255, 0.8);
     color: #ffffff;
 }
 
 #clock {
     font-weight: 600;
     letter-spacing: 0.2px;
-    color: #f0f6fc;
+    padding: 0 10px;
+    color: #ffffff;
 }
 
 #network,
 #pulseaudio,
 #battery,
-#tray {
+#tray,
+#custom-spotlight,
+#custom-control-center {
     padding: 0 8px;
-    margin: 4px 2px;
+    margin: 3px 2px;
     border-radius: 6px;
-    background: rgba(255, 255, 255, 0.07);
-    color: #c9d1d9;
+    background: rgba(255, 255, 255, 0.06);
+    color: #e2e8f0;
+    transition: all 0.15s ease;
 }
 
 #network:hover,
 #pulseaudio:hover,
-#battery:hover {
-    background: rgba(255, 255, 255, 0.15);
+#battery:hover,
+#custom-spotlight:hover,
+#custom-control-center:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
 }
 
-#custom-power {
-    padding: 0 8px;
-    margin-right: 4px;
-    color: #ff5555;
-    font-size: 13px;
+/* ==============================================================================
+ * FLOATING BOTTOM GLASS DOCK (macOS Tahoe Design)
+ * ============================================================================== */
+
+window#waybar.dock {
+    background-color: transparent;
+}
+
+window#waybar.dock .modules-center {
+    background: rgba(28, 34, 48, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 20px;
+    padding: 4px 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55);
+}
+
+/* macOS Tahoe App Squircles */
+#custom-dock-finder,
+#custom-dock-launchpad,
+#custom-dock-browser,
+#custom-dock-terminal,
+#custom-dock-settings,
+#custom-dock-monitor,
+#custom-dock-downloads,
+#custom-dock-trash {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 20px;
+    border-radius: 12px;
+    margin: 4px 6px;
+    padding: 0;
+    transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+#custom-dock-finder:hover,
+#custom-dock-launchpad:hover,
+#custom-dock-browser:hover,
+#custom-dock-terminal:hover,
+#custom-dock-settings:hover,
+#custom-dock-monitor:hover,
+#custom-dock-downloads:hover,
+#custom-dock-trash:hover {
+    transform: translateY(-8px) scale(1.14);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5), 0 0 16px rgba(255, 255, 255, 0.35);
+}
+
+#custom-dock-finder {
+    background: linear-gradient(180deg, #5ac8fa 0%, #007aff 100%);
+    color: #ffffff;
+}
+
+#custom-dock-launchpad {
+    background: linear-gradient(180deg, #bf5af2 0%, #5856d6 100%);
+    color: #ffffff;
+}
+
+#custom-dock-browser {
+    background: linear-gradient(180deg, #32d74b 0%, #009688 100%);
+    color: #ffffff;
+}
+
+#custom-dock-terminal {
+    background: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%);
+    color: #00ff66;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+#custom-dock-settings {
+    background: linear-gradient(180deg, #8e8e93 0%, #636366 100%);
+    color: #ffffff;
+}
+
+#custom-dock-monitor {
+    background: linear-gradient(180deg, #ff9f0a 0%, #ff3b30 100%);
+    color: #ffffff;
+}
+
+#custom-dock-separator {
+    min-width: 2px;
+    max-width: 2px;
+    min-height: 36px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 8px 6px;
+    padding: 0;
+    border-radius: 1px;
+}
+
+#custom-dock-downloads {
+    background: linear-gradient(180deg, #64d2ff 0%, #0a84ff 100%);
+    color: #ffffff;
+}
+
+#custom-dock-trash {
+    background: linear-gradient(180deg, #636366 0%, #48484a 100%);
+    color: #ebebf5;
 }

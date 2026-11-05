@@ -1,5 +1,5 @@
 [global]
-    font = "Noto Sans 11"
+    font = "Inter 11"
     allow_markup = yes
     format = "<b>%s</b>\n%b"
     sort = yes
@@ -9,35 +9,35 @@
     show_age_threshold = 60
     word_wrap = yes
     ignore_newline = no
-    geometry = "360x6-24+50"
-    transparency = 15
+    geometry = "360x6-24+44"
+    transparency = 12
     idle_threshold = 120
     monitor = 0
     follow = mouse
     sticky_history = yes
     line_height = 0
     separator_height = 2
-    padding = 12
+    padding = 14
     horizontal_padding = 16
     separator_color = frame
     startup_notification = false
-    corner_radius = 12
+    corner_radius = 14
+    frame_width = 1
 
 [urgency_low]
-    background = "#161b22"
-    foreground = "#8b949e"
-    frame_color = "#30363d"
+    background = "#182030"
+    foreground = "#a0aec0"
+    frame_color = "#2d3748"
     timeout = 4
 
 [urgency_normal]
-    background = "#161b22"
-    foreground = "#f0f6fc"
-    frame_color = "#0071e3"
+    background = "#182030"
+    foreground = "#f5f5f7"
+    frame_color = "#007aff"
     timeout = 6
 
 [urgency_critical]
-    background = "#161b22"
-    foreground = "#ff7b72"
-    frame_color = "#f85149"
+    background = "#2a1518"
+    foreground = "#ff6b62"
+    frame_color = "#ff5f56"
     timeout = 0
-

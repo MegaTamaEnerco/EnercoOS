@@ -1,12 +1,12 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-desktop-config
 pkgver=1.0.0
-pkgrel=7
-pkgdesc="macOS Cupertino Hyprland, Waybar, Rofi, Kitty, and SDDM configurations for EnercoOS"
+pkgrel=8
+pkgdesc="macOS Tahoe Hyprland, Waybar, Rofi, Kitty, and SDDM configurations for EnercoOS"
 arch=('any')
 url="https://enerco.internal"
 license=('GPL3')
-depends=('hyprland' 'waybar' 'rofi' 'swaybg' 'kitty' 'dunst' 'sddm')
+depends=('hyprland' 'waybar' 'rofi' 'swaybg' 'kitty' 'dunst' 'sddm' 'inter-font' 'capitaine-cursors')
 source=(
     "hyprland.lua"
     "hyprland.conf"
@@ -17,12 +17,18 @@ source=(
     "dunstrc"
     "sddm-enerco.conf"
     "zshrc"
+    "gtk3-settings.ini"
+    "gtk-mac.css"
 )
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 package() {
     # SDDM System Configuration
     install -Dm644 "${srcdir}/sddm-enerco.conf" "${pkgdir}/etc/sddm.conf.d/10-enerco.conf"
+
+    # System GTK defaults
+    install -Dm644 "${srcdir}/gtk3-settings.ini" "${pkgdir}/etc/gtk-3.0/settings.ini"
+    install -Dm644 "${srcdir}/gtk3-settings.ini" "${pkgdir}/etc/gtk-4.0/settings.ini"
 
     # User Profile Template (/etc/skel/)
     install -Dm644 "${srcdir}/hyprland.lua" "${pkgdir}/etc/skel/.config/hypr/hyprland.lua"
@@ -33,5 +39,9 @@ package() {
     install -Dm644 "${srcdir}/kitty.conf" "${pkgdir}/etc/skel/.config/kitty/kitty.conf"
     install -Dm644 "${srcdir}/dunstrc" "${pkgdir}/etc/skel/.config/dunst/dunstrc"
     install -Dm644 "${srcdir}/zshrc" "${pkgdir}/etc/skel/.zshrc"
+    install -Dm644 "${srcdir}/gtk3-settings.ini" "${pkgdir}/etc/skel/.config/gtk-3.0/settings.ini"
+    install -Dm644 "${srcdir}/gtk-mac.css" "${pkgdir}/etc/skel/.config/gtk-3.0/gtk.css"
+    install -Dm644 "${srcdir}/gtk3-settings.ini" "${pkgdir}/etc/skel/.config/gtk-4.0/settings.ini"
+    install -Dm644 "${srcdir}/gtk-mac.css" "${pkgdir}/etc/skel/.config/gtk-4.0/gtk.css"
 }
 

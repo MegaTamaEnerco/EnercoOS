@@ -1,7 +1,7 @@
 configuration {
     modi: "drun,run,window";
     lines: 7;
-    font: "Noto Sans 13";
+    font: "Inter 13";
     show-icons: true;
     icon-theme: "Papirus";
     terminal: "kitty";
@@ -9,21 +9,20 @@ configuration {
     location: 0;
     disable-history: false;
     hide-scrollbar: true;
-    display-drun: "   Spotlight ";
-    display-run: "   Run ";
-    display-window: "   Window ";
+    display-drun: "  ";
+    display-run: "  ";
+    display-window: "  ";
 }
 
 @theme "/dev/null"
 
 * {
-    bg: rgba(22, 27, 34, 0.85);
+    bg: rgba(22, 28, 42, 0.88);
     bg-alt: rgba(255, 255, 255, 0.08);
-    bg-selected: rgba(0, 113, 227, 0.85);
-    fg: #f0f6fc;
+    bg-selected: rgba(0, 122, 255, 0.90);
+    fg: #f5f5f7;
     fg-dim: #8b949e;
-    border-color: rgba(255, 255, 255, 0.15);
-    border-radius: 14px;
+    border-color: rgba(255, 255, 255, 0.18);
     background-color: transparent;
     text-color: @fg;
 }
@@ -33,8 +32,8 @@ window {
     background-color: @bg;
     border: 1px solid;
     border-color: @border-color;
-    border-radius: 16px;
-    width: 640px;
+    border-radius: 18px;
+    width: 620px;
     padding: 16px;
 }
 
@@ -46,24 +45,26 @@ mainbox {
 inputbar {
     children: [ prompt, entry ];
     background-color: @bg-alt;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 10px 14px;
 }
 
 prompt {
     font-weight: bold;
-    color: #40c8e0;
+    font-size: 15px;
+    color: #007aff;
     margin-right: 8px;
 }
 
 entry {
-    placeholder: "Search applications, ERP, settings...";
+    font: "Inter 14";
+    placeholder: "Spotlight Search";
     placeholder-color: @fg-dim;
 }
 
 listview {
     columns: 1;
-    lines: 7;
+    lines: 6;
     cycle: true;
     dynamic: true;
     scrollbar: false;
@@ -73,21 +74,21 @@ listview {
 
 element {
     orientation: horizontal;
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 8px 12px;
     spacing: 12px;
 }
 
 element-icon {
-    size: 24px;
+    size: 28px;
 }
 
 element-text {
     vertical-align: 0.5;
+    font: "Inter 13";
 }
 
 element selected {
     background-color: @bg-selected;
     color: #ffffff;
 }
-

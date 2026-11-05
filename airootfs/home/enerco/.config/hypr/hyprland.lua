@@ -28,11 +28,19 @@ hl.timer(function ()
     hl.exec_cmd("pgrep -x waybar >/dev/null || waybar &")
     hl.exec_cmd("pgrep -x dunst >/dev/null || dunst &")
     hl.exec_cmd("pgrep -f enerco-welcome >/dev/null || /usr/local/bin/enerco-welcome &")
+    -- macOS Desktop Appearance & Traffic Lights
+    hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-theme 'capitaine-cursors' 2>/dev/null || true")
+    hl.exec_cmd("gsettings set org.gnome.desktop.interface font-name 'Inter 11' 2>/dev/null || true")
+    hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true")
+    hl.exec_cmd("gsettings set org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:' 2>/dev/null || true")
 end, { timeout = 500, type = "oneshot" })
 
 -- Environment Variables
+hl.env("XCURSOR_THEME", "capitaine-cursors")
 hl.env("XCURSOR_SIZE", "24")
+hl.env("HYPRCURSOR_THEME", "capitaine-cursors")
 hl.env("HYPRCURSOR_SIZE", "24")
+hl.env("GTK_THEME", "Adwaita:dark")
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.env("XDG_SESSION_TYPE", "wayland")
 hl.env("XDG_SESSION_DESKTOP", "Hyprland")
@@ -43,15 +51,15 @@ hl.env("WLR_RENDERER_ALLOW_SOFTWARE", "1")
 hl.env("LIBGL_ALWAYS_SOFTWARE", "1")
 hl.env("AQ_NO_MODIFIERS", "1")
 
--- Look and Feel (Cupertino macOS Aesthetics)
+-- Look and Feel (macOS Tahoe Aesthetics)
 hl.config({
     general = {
-        gaps_in  = 6,
-        gaps_out = 14,
-        border_size = 2,
+        gaps_in  = 8,
+        gaps_out = 16,
+        border_size = 1,
         col = {
-            active_border   = { colors = {"rgba(007affff)", "rgba(5856d6ff)"}, angle = 45 },
-            inactive_border = "rgba(00000033)",
+            active_border   = "rgba(ffffff45)",
+            inactive_border = "rgba(ffffff15)",
         },
         resize_on_border = true,
         allow_tearing    = false,
@@ -59,21 +67,21 @@ hl.config({
     },
 
     decoration = {
-        rounding       = 12,
+        rounding       = 14,
         rounding_power = 2,
         active_opacity   = 0.98,
         inactive_opacity = 0.92,
         shadow = {
             enabled      = true,
-            range        = 18,
-            render_power = 3,
-            color        = 0x40000000,
+            range        = 35,
+            render_power = 4,
+            color        = 0x66000000,
         },
         blur = {
             enabled   = true,
-            size      = 6,
-            passes    = 2,
-            vibrancy  = 0.2,
+            size      = 10,
+            passes    = 3,
+            vibrancy  = 0.3,
         },
     },
 
