@@ -53,11 +53,20 @@ mkarchiso -v \
     -o "${OUT_DIR}" \
     "${SCRIPT_DIR}"
 
-# If running inside WSL, mirror output ISO to Windows dist directory
+# If running inside WSL, mirror output ISO to Windows dist directory safely
 if [[ -d "/mnt/c/Users/CorSec/Documents/personal/EnercoOS" ]] && [[ "${SCRIPT_DIR}" != "/mnt/c/"* ]]; then
     echo "[STEP 5/5] Mirroring output ISO to Windows host workspace..."
     mkdir -p "/mnt/c/Users/CorSec/Documents/personal/EnercoOS/dist"
-    cp -v "${OUT_DIR}"/*.iso "/mnt/c/Users/CorSec/Documents/personal/EnercoOS/dist/" 2>/dev/null || true
+    for iso_file in "${OUT_DIR}"/*.iso; do
+        if [[ -f "${iso_file}" ]]; then
+            iso_name="$(basename "${iso_file}")"
+            dest_file="/mnt/c/Users/CorSec/Documents/personal/EnercoOS/dist/${iso_name}"
+            echo "Copying ${iso_name} via atomic staging..."
+            cp -f "${iso_file}" "${dest_file}.tmp"
+            mv -f "${dest_file}.tmp" "${dest_file}"
+            echo "Mirrored: ${dest_file} ($(stat -c%s "${dest_file}") bytes)"
+        fi
+    done
 fi
 
 echo "=========================================================="
