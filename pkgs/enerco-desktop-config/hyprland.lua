@@ -133,12 +133,30 @@ hl.config({
         vrr                     = 0,
     },
     input = {
-        kb_layout  = "us",
+        kb_layout    = "us",
         follow_mouse = 1,
-        sensitivity = 0,
+        sensitivity  = 0,
         touchpad = {
-            natural_scroll = true,
+            natural_scroll          = true,
+            tap_to_click            = true,
+            clickfinger_behavior    = true,
+            tap_and_drag            = true,
+            drag_lock               = false,
+            scroll_factor           = 1.0,
+            middle_button_emulation = true,
         },
+    },
+    gestures = {
+        workspace_swipe                          = true,
+        workspace_swipe_fingers                  = 3,
+        workspace_swipe_distance                 = 300,
+        workspace_swipe_invert                   = true,
+        workspace_swipe_min_speed_to_force       = 30,
+        workspace_swipe_cancel_ratio             = 0.5,
+        workspace_swipe_create_new               = true,
+        workspace_swipe_direction_lock           = true,
+        workspace_swipe_direction_lock_threshold = 10,
+        workspace_swipe_forever                  = true,
     },
 })
 
@@ -152,6 +170,7 @@ hl.bind(mainMod .. " + W",      hl.dsp.window.close())
 hl.bind(mainMod .. " + Q",      hl.dsp.window.close())
 hl.bind(mainMod .. " + E",      hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + Tab",    hl.dsp.exec_cmd("rofi -show window"))
+hl.bind(mainMod .. " + D",      hl.dsp.exec_cmd("hyprctl dispatch togglespecialworkspace"))
 hl.bind(mainMod .. " + L",      hl.dsp.exec_cmd("hyprlock"))
 hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd("chromium --app=https://mterp.internal --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist"))
 hl.bind(mainMod .. " + I",      hl.dsp.exec_cmd("/usr/local/bin/enerco-installer"))

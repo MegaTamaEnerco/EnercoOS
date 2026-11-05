@@ -1,7 +1,7 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-desktop-config
 pkgver=1.0.0
-pkgrel=13
+pkgrel=14
 pkgdesc="macOS Tahoe Hyprland, Waybar, Rofi, Kitty, Hyprlock, and SDDM configurations for EnercoOS"
 arch=('any')
 url="https://enerco.internal"
@@ -15,6 +15,7 @@ source=(
     "rofi-config.rasi"
     "rofi-apple-menu.rasi"
     "rofi-control-center.rasi"
+    "rofi-menubar.rasi"
     "hyprlock.conf"
     "kitty.conf"
     "dunstrc"
@@ -23,7 +24,7 @@ source=(
     "gtk3-settings.ini"
     "gtk-mac.css"
 )
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 package() {
     # SDDM System Configuration
@@ -36,6 +37,9 @@ package() {
     # System Hyprlock default
     install -Dm644 "${srcdir}/hyprlock.conf" "${pkgdir}/etc/hypr/hyprlock.conf"
 
+    # System Rofi theme defaults
+    install -Dm644 "${srcdir}/rofi-menubar.rasi" "${pkgdir}/usr/share/rofi/themes/menubar.rasi"
+
     # User Profile Template (/etc/skel/)
     install -Dm644 "${srcdir}/hyprland.lua" "${pkgdir}/etc/skel/.config/hypr/hyprland.lua"
     install -Dm644 "${srcdir}/hyprland.conf" "${pkgdir}/etc/skel/.config/hypr/hyprland.conf"
@@ -45,6 +49,7 @@ package() {
     install -Dm644 "${srcdir}/rofi-config.rasi" "${pkgdir}/etc/skel/.config/rofi/config.rasi"
     install -Dm644 "${srcdir}/rofi-apple-menu.rasi" "${pkgdir}/etc/skel/.config/rofi/apple-menu.rasi"
     install -Dm644 "${srcdir}/rofi-control-center.rasi" "${pkgdir}/etc/skel/.config/rofi/control-center.rasi"
+    install -Dm644 "${srcdir}/rofi-menubar.rasi" "${pkgdir}/etc/skel/.config/rofi/menubar.rasi"
     install -Dm644 "${srcdir}/kitty.conf" "${pkgdir}/etc/skel/.config/kitty/kitty.conf"
     install -Dm644 "${srcdir}/dunstrc" "${pkgdir}/etc/skel/.config/dunst/dunstrc"
     install -Dm644 "${srcdir}/zshrc" "${pkgdir}/etc/skel/.zshrc"

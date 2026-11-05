@@ -1,10 +1,15 @@
+// ==============================================================================
+// EnercoOS macOS Tahoe Dual-Bar Architecture
+// Top Menubar (30px) + Floating Bottom Dock (56px)
+// ==============================================================================
 [
     {
         "name": "menubar",
         "layer": "top",
         "position": "top",
         "height": 30,
-        "spacing": 4,
+        "exclusive": true,
+        "passthrough": false,
         "modules-left": [
             "custom/apple-menu",
             "custom/active-app",
@@ -30,36 +35,39 @@
             "clock"
         ],
         "custom/apple-menu": {
-            "format": "⚡ Enerco",
-            "tooltip-format": "macOS System Menu",
-            "on-click": "/usr/local/bin/enerco-apple-menu"
+            "format": "   ",
+            "tooltip-format": "Apple System Menu",
+            "on-click": "/usr/local/bin/enerco-menubar apple"
         },
         "custom/active-app": {
             "format": "<b>Finder</b>",
-            "tooltip": "Active Application",
-            "on-click": "thunar"
+            "tooltip-format": "Finder Application Menu",
+            "on-click": "/usr/local/bin/enerco-menubar finder"
         },
         "custom/menu-file": {
             "format": "File",
-            "tooltip": false,
-            "on-click": "thunar"
+            "tooltip-format": "File Menu",
+            "on-click": "/usr/local/bin/enerco-menubar file"
         },
         "custom/menu-edit": {
             "format": "Edit",
-            "tooltip": false
+            "tooltip-format": "Edit Menu",
+            "on-click": "/usr/local/bin/enerco-menubar edit"
         },
         "custom/menu-view": {
             "format": "View",
-            "tooltip": false
+            "tooltip-format": "View Menu",
+            "on-click": "/usr/local/bin/enerco-menubar view"
         },
         "custom/menu-window": {
             "format": "Window",
-            "tooltip": false
+            "tooltip-format": "Window Menu",
+            "on-click": "/usr/local/bin/enerco-menubar window"
         },
         "custom/menu-help": {
             "format": "Help",
-            "tooltip": false,
-            "on-click": "/usr/local/bin/enerco-welcome"
+            "tooltip-format": "Help Menu",
+            "on-click": "/usr/local/bin/enerco-menubar help"
         },
         "custom/ws1": {
             "format": " 1 ",
@@ -82,24 +90,22 @@
             "on-click": "hyprctl dispatch workspace 4"
         },
         "tray": {
-            "icon-size": 14,
-            "spacing": 8
+            "icon-size": 15,
+            "spacing": 10
         },
         "network": {
-            "format-wifi": "  {essid}",
-            "format-ethernet": "󰈀  {ipaddr}",
-            "format-linked": "󰈀  Connected",
-            "format-disconnected": "󰖪  Off",
-            "tooltip-format": "Network: {ipaddr}",
-            "on-click": "kitty -e nmtui"
+            "format-wifi": "",
+            "format-ethernet": "󰈀",
+            "format-disconnected": "󰤮",
+            "tooltip-format": "{ifname}: {ipaddr}",
+            "on-click": "nm-connection-editor"
         },
         "pulseaudio": {
-            "format": "{icon} {volume}%",
-            "format-muted": " Muted",
+            "format": "{icon}",
+            "format-muted": "󰝟",
             "format-icons": {
                 "default": ["", "", ""]
             },
-            "tooltip": false,
             "on-click": "pavucontrol"
         },
         "battery": {
@@ -113,7 +119,7 @@
         },
         "custom/spotlight": {
             "format": "",
-            "tooltip": "Spotlight (Super+Space)",
+            "tooltip": "Spotlight Search (Super+Space)",
             "on-click": "rofi -show drun"
         },
         "custom/control-center": {
@@ -148,7 +154,7 @@
         "custom/dock-finder": {
             "format": "",
             "tooltip-format": "Finder",
-            "on-click": "thunar"
+            "on-click": "/usr/local/bin/enerco-dock-launch thunar thunar"
         },
         "custom/dock-launchpad": {
             "format": "",
@@ -158,22 +164,22 @@
         "custom/dock-browser": {
             "format": "",
             "tooltip-format": "Safari / MTERP ERP",
-            "on-click": "chromium --app=https://mterp.internal --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist"
+            "on-click": "/usr/local/bin/enerco-dock-launch chromium chromium --app=https://mterp.internal --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist"
         },
         "custom/dock-terminal": {
             "format": "",
             "tooltip-format": "Terminal",
-            "on-click": "kitty"
+            "on-click": "/usr/local/bin/enerco-dock-launch kitty kitty"
         },
         "custom/dock-settings": {
             "format": "",
             "tooltip-format": "System Settings / Installer",
-            "on-click": "/usr/local/bin/enerco-installer"
+            "on-click": "/usr/local/bin/enerco-dock-launch calamares /usr/local/bin/enerco-installer"
         },
         "custom/dock-monitor": {
             "format": "",
             "tooltip-format": "Activity Monitor",
-            "on-click": "kitty -e htop"
+            "on-click": "/usr/local/bin/enerco-dock-launch kitty kitty -e htop"
         },
         "custom/dock-separator": {
             "format": " ",
@@ -182,12 +188,12 @@
         "custom/dock-downloads": {
             "format": "",
             "tooltip-format": "Downloads",
-            "on-click": "thunar ~/Downloads"
+            "on-click": "/usr/local/bin/enerco-dock-launch thunar thunar ~/Downloads"
         },
         "custom/dock-trash": {
             "format": "",
             "tooltip-format": "Trash",
-            "on-click": "thunar trash:///"
+            "on-click": "/usr/local/bin/enerco-dock-launch thunar thunar trash:///"
         }
     }
 ]

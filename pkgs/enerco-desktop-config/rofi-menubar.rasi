@@ -1,0 +1,62 @@
+/* ==============================================================================
+ * EnercoOS macOS Menubar Real Dropdown Theme
+ * Exact translucent dark glass styling matching macOS Tahoe
+ * ============================================================================== */
+
+configuration {
+    font: "Inter 12";
+    show-icons: false;
+    disable-history: true;
+    hide-scrollbar: true;
+}
+
+@theme "/dev/null"
+
+* {
+    bg: rgba(22, 28, 42, 0.96);
+    bg-selected: rgba(0, 122, 255, 0.92);
+    fg: #f5f5f7;
+    fg-dim: rgba(255, 255, 255, 0.45);
+    border-color: rgba(255, 255, 255, 0.18);
+    background-color: transparent;
+    text-color: @fg;
+}
+
+window {
+    transparency: "real";
+    background-color: @bg;
+    border: 1px solid;
+    border-color: @border-color;
+    border-radius: 10px;
+    padding: 6px;
+}
+
+mainbox {
+    children: [ listview ];
+    spacing: 0px;
+}
+
+listview {
+    columns: 1;
+    cycle: true;
+    dynamic: true;
+    scrollbar: false;
+    layout: vertical;
+    spacing: 2px;
+}
+
+element {
+    orientation: horizontal;
+    border-radius: 6px;
+    padding: 5px 12px;
+}
+
+element-text {
+    vertical-align: 0.5;
+    font: "Inter 12";
+}
+
+element selected {
+    background-color: @bg-selected;
+    color: #ffffff;
+}

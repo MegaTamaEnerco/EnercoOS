@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# EnercoOS macOS Dock Smart Launcher
+# If app is already open, focus its window; otherwise launch the application.
+# ==============================================================================
+set -euo pipefail
+
+APP_CLASS="${1}"
+shift
+LAUNCH_CMD=("$@")
+
+# Query Hyprland clients to check if window is already active
+if hyprctl clients | grep -qi "class: ${APP_CLASS}"; then
+    # Focus existing window
+    hyprctl dispatch focuswindow "class:^(${APP_CLASS})$" 2>/dev/null || true
+else
+    # Launch new instance in background
+    "${LAUNCH_CMD[@]}" &
+fi

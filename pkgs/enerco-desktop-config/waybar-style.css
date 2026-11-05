@@ -24,15 +24,18 @@ window#waybar.menubar {
 }
 
 #custom-apple-menu {
-    font-weight: 700;
-    font-size: 13px;
-    padding: 0 10px;
-    margin-right: 2px;
-    color: #58a6ff;
+    background-image: url("file:///usr/share/pixmaps/whitesur-apple.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 15px 15px;
+    min-width: 20px;
+    padding: 0 6px;
+    margin: 3px 2px 3px 6px;
+    border-radius: 6px;
 }
 
 #custom-apple-menu:hover {
-    color: #79c0ff;
+    background-color: rgba(255, 255, 255, 0.18);
 }
 
 #window,
@@ -41,7 +44,12 @@ window#waybar.menubar {
     font-size: 13px;
     color: #ffffff;
     padding: 0 8px;
-    margin-right: 6px;
+    margin: 3px 4px 3px 2px;
+    border-radius: 5px;
+}
+
+#custom-active-app:hover {
+    background-color: rgba(255, 255, 255, 0.18);
 }
 
 #custom-menu-file,
@@ -49,7 +57,7 @@ window#waybar.menubar {
 #custom-menu-view,
 #custom-menu-window,
 #custom-menu-help {
-    color: #a0aec0;
+    color: rgba(245, 245, 247, 0.88);
     padding: 0 7px;
     border-radius: 5px;
     margin: 3px 1px;
@@ -61,7 +69,7 @@ window#waybar.menubar {
 #custom-menu-window:hover,
 #custom-menu-help:hover {
     color: #ffffff;
-    background: rgba(255, 255, 255, 0.12);
+    background-color: rgba(255, 255, 255, 0.18);
 }
 
 #custom-ws1,
