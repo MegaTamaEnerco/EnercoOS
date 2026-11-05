@@ -87,10 +87,11 @@ hl.config({
             color        = 0x66000000,
         },
         blur = {
-            enabled   = true,
-            size      = 10,
-            passes    = 3,
-            vibrancy  = 0.3,
+            enabled           = true,
+            size              = 6,
+            passes            = 2,
+            vibrancy          = 0.3,
+            new_optimizations = true,
         },
     },
 
@@ -105,17 +106,17 @@ hl.curve("easeInOutCubic", { type = "bezier", points = { {0.65, 0.05}, {0.36, 1}
 hl.curve("linear",         { type = "bezier", points = { {0, 0},       {1, 1}       } })
 hl.curve("almostLinear",   { type = "bezier", points = { {0.5, 0.5},   {0.75, 1}    } })
 hl.curve("quick",          { type = "bezier", points = { {0.15, 0},    {0.1, 1}     } })
-hl.curve("easy",           { type = "spring", mass = 1, stiffness = 240, damping = 24 })
+hl.curve("easy",           { type = "spring", mass = 1, stiffness = 280, damping = 26 })
 
 hl.animation({ leaf = "global",     enabled = true,  speed = 8,   bezier = "default" })
 hl.animation({ leaf = "border",     enabled = true,  speed = 5,   bezier = "easeOutQuint" })
-hl.animation({ leaf = "windows",    enabled = true,  speed = 4.5, spring = "easy" })
-hl.animation({ leaf = "windowsIn",  enabled = true,  speed = 4,   spring = "easy",   style = "popin 87%" })
+hl.animation({ leaf = "windows",    enabled = true,  speed = 4,   spring = "easy" })
+hl.animation({ leaf = "windowsIn",  enabled = true,  speed = 3.5, spring = "easy",   style = "popin 87%" })
 hl.animation({ leaf = "windowsOut", enabled = true,  speed = 2,   bezier = "linear", style = "popin 87%" })
 hl.animation({ leaf = "fadeIn",     enabled = true,  speed = 2,   bezier = "almostLinear" })
 hl.animation({ leaf = "fadeOut",    enabled = true,  speed = 2,   bezier = "almostLinear" })
-hl.animation({ leaf = "fade",       enabled = true,  speed = 3,   bezier = "quick" })
-hl.animation({ leaf = "layers",     enabled = true,  speed = 4,   bezier = "easeOutQuint" })
+hl.animation({ leaf = "fade",       enabled = true,  speed = 2.5, bezier = "quick" })
+hl.animation({ leaf = "layers",     enabled = true,  speed = 3.5, bezier = "easeOutQuint" })
 
 -- Layout & Input
 hl.config({
@@ -128,6 +129,8 @@ hl.config({
     misc = {
         force_default_wallpaper = 0,
         disable_hyprland_logo   = true,
+        vfr                     = true,
+        vrr                     = 0,
     },
     input = {
         kb_layout  = "us",
@@ -150,7 +153,7 @@ hl.bind(mainMod .. " + Q",      hl.dsp.window.close())
 hl.bind(mainMod .. " + E",      hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + Tab",    hl.dsp.exec_cmd("rofi -show window"))
 hl.bind(mainMod .. " + L",      hl.dsp.exec_cmd("hyprlock"))
-hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd("chromium --app=https://mterp.internal --ozone-platform=wayland"))
+hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd("chromium --app=https://mterp.internal --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist"))
 hl.bind(mainMod .. " + I",      hl.dsp.exec_cmd("/usr/local/bin/enerco-installer"))
 hl.bind(mainMod .. " + M",      hl.dsp.exit())
 hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))

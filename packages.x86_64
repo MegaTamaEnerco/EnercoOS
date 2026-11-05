@@ -7,6 +7,10 @@ base
 base-devel
 linux
 linux-headers
+linux-zen
+linux-zen-headers
+zram-generator
+irqbalance
 linux-firmware
 amd-ucode
 intel-ucode

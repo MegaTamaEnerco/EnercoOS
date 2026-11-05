@@ -1,12 +1,12 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-enterprise-tools
 pkgver=1.0.0
-pkgrel=9
-pkgdesc="Enterprise tooling, session initialization, MTERP launcher, and macOS system menus for EnercoOS"
+pkgrel=10
+pkgdesc="Enterprise tooling, session initialization, MTERP launcher, and CachyOS-grade performance tuning for EnercoOS"
 arch=('any')
 url="https://enerco.internal"
 license=('Proprietary')
-depends=('bash' 'chromium' 'ufw' 'wireguard-tools' 'openvpn' 'python' 'python-gobject' 'gtk3' 'rofi')
+depends=('bash' 'chromium' 'ufw' 'wireguard-tools' 'openvpn' 'python' 'python-gobject' 'gtk3' 'rofi' 'zram-generator')
 source=(
     "enerco-session"
     "enerco-lockdown"
@@ -16,8 +16,18 @@ source=(
     "enerco-control-center"
     "mterp.desktop"
     "sysctl-enerco-security.conf"
+    "sysctl-cachyos-performance.conf"
+    "zram-generator.conf"
+    "30-zram.rules"
+    "50-sata.rules"
+    "60-ioschedulers.rules"
+    "99-cpu-dma-latency.rules"
+    "00-timeout.conf"
+    "10-limits.conf"
+    "00-journal-size.conf"
+    "20-audio.conf"
 )
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 package() {
     # Binaries and session wrappers
@@ -30,12 +40,28 @@ package() {
 
     # Enterprise application launcher
     install -Dm644 "${srcdir}/mterp.desktop" "${pkgdir}/usr/share/applications/mterp.desktop"
-
-    # Also place on desktop skeleton
     install -Dm755 "${srcdir}/mterp.desktop" "${pkgdir}/etc/skel/Desktop/mterp.desktop"
 
-    # Kernel Hardening
-    install -Dm644 "${srcdir}/sysctl-enerco-security.conf" "${pkgdir}/etc/sysctl.d/99-enerco-security.conf"
+    # Kernel Hardening & CachyOS-Grade Performance Tuning
+    install -Dm644 "${srcdir}/sysctl-enerco-security.conf" "${pkgdir}/etc/sysctl.d/90-enerco-security.conf"
+    install -Dm644 "${srcdir}/sysctl-cachyos-performance.conf" "${pkgdir}/etc/sysctl.d/99-cachyos-performance.conf"
+
+    # High-Performance ZRAM Compressed Swap Generator
+    install -Dm644 "${srcdir}/zram-generator.conf" "${pkgdir}/etc/systemd/zram-generator.conf"
+
+    # CachyOS Storage & Hardware Udev Rules
+    install -Dm644 "${srcdir}/30-zram.rules" "${pkgdir}/etc/udev/rules.d/30-zram.rules"
+    install -Dm644 "${srcdir}/50-sata.rules" "${pkgdir}/etc/udev/rules.d/50-sata.rules"
+    install -Dm644 "${srcdir}/60-ioschedulers.rules" "${pkgdir}/etc/udev/rules.d/60-ioschedulers.rules"
+    install -Dm644 "${srcdir}/99-cpu-dma-latency.rules" "${pkgdir}/etc/udev/rules.d/99-cpu-dma-latency.rules"
+
+    # Systemd Latency Clamp & Resource Limits
+    install -Dm644 "${srcdir}/00-timeout.conf" "${pkgdir}/etc/systemd/system.conf.d/00-timeout.conf"
+    install -Dm644 "${srcdir}/10-limits.conf" "${pkgdir}/etc/systemd/system.conf.d/10-limits.conf"
+    install -Dm644 "${srcdir}/00-journal-size.conf" "${pkgdir}/etc/systemd/journald.conf.d/00-journal-size.conf"
+
+    # Real-Time Audio Priority
+    install -Dm644 "${srcdir}/20-audio.conf" "${pkgdir}/etc/security/limits.d/20-audio.conf"
 
     # Internal Certificate Trust Directory
     install -dm755 "${pkgdir}/etc/ca-certificates/trust-source/anchors"

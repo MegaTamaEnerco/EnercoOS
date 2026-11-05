@@ -158,7 +158,7 @@
         "custom/dock-browser": {
             "format": "",
             "tooltip-format": "Safari / MTERP ERP",
-            "on-click": "chromium --app=https://mterp.internal --ozone-platform=wayland"
+            "on-click": "chromium --app=https://mterp.internal --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist"
         },
         "custom/dock-terminal": {
             "format": "",

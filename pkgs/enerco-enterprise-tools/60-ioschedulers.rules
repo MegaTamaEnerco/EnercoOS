@@ -1,0 +1,16 @@
+# ==============================================================================
+# EnercoOS / CachyOS Storage I/O Scheduler Rules
+# Sets optimal I/O schedulers based on media type
+# ==============================================================================
+
+# Rotational Hard Disk Drives (HDD)
+ACTION=="add|change", KERNEL=="sd[a-z]*", ATTR{queue/rotational}=="1", \
+    ATTR{queue/scheduler}="bfq"
+
+# Solid State Drives (SATA SSD & VirtIO / eMMC)
+ACTION=="add|change", KERNEL=="sd[a-z]*|vd[a-z]*|mmcblk[0-9]*", ATTR{queue/rotational}=="0", \
+    ATTR{queue/scheduler}="mq-deadline"
+
+# NVMe High-Performance Drives
+ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/rotational}=="0", \
+    ATTR{queue/scheduler}="kyber"
