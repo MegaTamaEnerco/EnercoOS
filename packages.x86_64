@@ -62,7 +62,8 @@ vulkan-icd-loader
 vulkan-intel
 vulkan-radeon
 nvidia-utils
-virtualbox-guest-utils-nox
+virtualbox-guest-utils
+wlr-randr
 qemu-guest-agent
 
 # Wayland Cupertino Desktop Stack (Hyprland + SDDM)
