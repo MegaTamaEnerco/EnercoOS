@@ -1,0 +1,4 @@
+# Local package repository placeholder
+# Built packages (*.pkg.tar.zst) and repository database (enerco.db.tar.gz)
+# are generated here by scripts/build-packages.sh
+

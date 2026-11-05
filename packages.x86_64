@@ -1,0 +1,120 @@
+# ==============================================================================
+# EnercoOS Package Manifest (packages.x86_64)
+# ==============================================================================
+
+# Core Base System & Kernel
+base
+base-devel
+linux
+linux-headers
+linux-firmware
+amd-ucode
+intel-ucode
+btrfs-progs
+e2fsprogs
+dosfstools
+ntfs-3g
+efibootmgr
+grub
+syslinux
+mkinitcpio
+mkinitcpio-archiso
+mkinitcpio-nfs-utils
+nbd
+pv
+which
+sudo
+nano
+zsh
+bash-completion
+man-db
+man-pages
+texinfo
+
+# Networking, VPN & Enterprise Security
+networkmanager
+network-manager-applet
+wireless_tools
+wpa_supplicant
+systemd-resolvconf
+wireguard-tools
+openvpn
+ufw
+openssh
+ca-certificates
+curl
+wget
+rsync
+git
+bind
+
+# Sound & Multimedia (Modern PipeWire Stack)
+pipewire
+pipewire-pulse
+pipewire-alsa
+pipewire-jack
+wireplumber
+pavucontrol
+
+# Graphics Drivers (Universal Hardware & Virtual Machine Fallback)
+mesa
+vulkan-icd-loader
+vulkan-intel
+vulkan-radeon
+nvidia-utils
+virtualbox-guest-utils-nox
+qemu-guest-agent
+
+# Wayland Cupertino Desktop Stack (Hyprland + SDDM)
+hyprland
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-gtk
+waybar
+rofi
+swaybg
+dunst
+kitty
+thunar
+thunar-archive-plugin
+gvfs
+file-roller
+wl-clipboard
+grim
+slurp
+polkit-gnome
+sddm
+qt5-wayland
+qt6-wayland
+kvantum
+kvantum-qt5
+brightnessctl
+
+# Typography & Visual Aesthetics
+ttf-cascadia-code
+noto-fonts
+noto-fonts-emoji
+otf-font-awesome
+papirus-icon-theme
+
+# Enterprise ERP Runtime & Admin Tools
+chromium
+htop
+fastfetch
+parted
+gparted
+os-prober
+kpmcore
+xorg-xhost
+xkeyboard-config
+libxkbcommon
+squashfs-tools
+
+# ==============================================================================
+# In-Tree Standard EnercoOS Packages (Built from pkgs/ into localrepo)
+# ==============================================================================
+calamares
+enerco-branding
+enerco-desktop-config
+enerco-enterprise-tools
+enerco-calamares-config
+

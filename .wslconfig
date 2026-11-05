@@ -1,0 +1,9 @@
+# Recommended WSL 2 configuration for EnercoOS development
+# Copy or merge this file to C:\Users\<YourUser>\.wslconfig on Windows 11 host
+[wsl2]
+memory=8GB
+processors=4
+swap=4GB
+nestedVirtualization=true
+guiApplications=true
+
