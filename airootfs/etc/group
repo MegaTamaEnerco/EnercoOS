@@ -1,0 +1,11 @@
+root:x:0:root
+wheel:x:998:root,enerco
+video:x:986:enerco
+audio:x:995:enerco
+input:x:990:enerco
+storage:x:992:enerco
+network:x:90:enerco
+autologin:x:968:enerco
+users:x:985:enerco
+enerco:x:1000:
+

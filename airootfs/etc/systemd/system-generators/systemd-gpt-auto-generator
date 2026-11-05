@@ -1,0 +1,4 @@
+#!/bin/sh
+# Mask systemd-gpt-auto-generator on live ISO to avoid searching for GPT partitions
+exit 0
+

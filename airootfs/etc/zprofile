@@ -1,0 +1,21 @@
+# EnercoOS Global Zsh Profile
+# Executed by zsh for login shells
+
+# Source system-wide profiles
+if [[ -d /etc/profile.d ]]; then
+    for profile in /etc/profile.d/*.sh; do
+        [[ -r "$profile" ]] && source "$profile"
+    done
+    unset profile
+fi
+
+# Ensure user skeleton configs are present
+if [[ ! -f "$HOME/.config/hypr/hyprland.lua" ]] && [[ -d "/etc/skel" ]]; then
+    cp -rT /etc/skel "$HOME" 2>/dev/null || true
+    chown -R 1000:1000 "$HOME" 2>/dev/null || true
+fi
+
+# Autostart Enerco Wayland Session on TTY1
+if [[ -z "$DISPLAY" ]] && [[ -z "$WAYLAND_DISPLAY" ]] && [[ "$(tty)" == "/dev/tty1" ]]; then
+    exec /usr/local/bin/enerco-session
+fi
