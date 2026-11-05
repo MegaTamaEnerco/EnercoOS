@@ -1,0 +1,38 @@
+# Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
+pkgname=enerco-enterprise-tools
+pkgver=1.0.0
+pkgrel=7
+pkgdesc="Enterprise tooling, session initialization, MTERP launcher, and security lockdown for EnercoOS"
+arch=('any')
+url="https://enerco.internal"
+license=('Proprietary')
+depends=('bash' 'chromium' 'ufw' 'wireguard-tools' 'openvpn' 'python' 'python-gobject' 'gtk3')
+source=(
+    "enerco-session"
+    "enerco-lockdown"
+    "enerco-welcome"
+    "enerco-installer"
+    "mterp.desktop"
+    "sysctl-enerco-security.conf"
+)
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+
+package() {
+    # Binaries and session wrappers
+    install -Dm755 "${srcdir}/enerco-session" "${pkgdir}/usr/local/bin/enerco-session"
+    install -Dm755 "${srcdir}/enerco-lockdown" "${pkgdir}/usr/local/bin/enerco-lockdown"
+    install -Dm755 "${srcdir}/enerco-welcome" "${pkgdir}/usr/local/bin/enerco-welcome"
+    install -Dm755 "${srcdir}/enerco-installer" "${pkgdir}/usr/local/bin/enerco-installer"
+
+    # Enterprise application launcher
+    install -Dm644 "${srcdir}/mterp.desktop" "${pkgdir}/usr/share/applications/mterp.desktop"
+
+    # Also place on desktop skeleton
+    install -Dm755 "${srcdir}/mterp.desktop" "${pkgdir}/etc/skel/Desktop/mterp.desktop"
+
+    # Kernel Hardening
+    install -Dm644 "${srcdir}/sysctl-enerco-security.conf" "${pkgdir}/etc/sysctl.d/99-enerco-security.conf"
+
+    # Internal Certificate Trust Directory
+    install -dm755 "${pkgdir}/etc/ca-certificates/trust-source/anchors"
+}

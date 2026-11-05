@@ -1,0 +1,12 @@
+NAME="EnercoOS"
+PRETTY_NAME="EnercoOS Enterprise Workstation 2026"
+ID=enercoos
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;40;116;240"
+HOME_URL="https://enerco.internal"
+SUPPORT_URL="https://support.enerco.internal"
+BUG_REPORT_URL="https://devops.enerco.internal/issues"
+PRIVACY_POLICY_URL="https://enerco.internal/privacy"
+LOGO=enerco-logo
+

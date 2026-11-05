@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# EnercoOS System Installer Launcher
+# Runs Calamares with root privileges under Wayland / X11
+# ==============================================================================
+
+set -e
+
+# Permit local root to connect to user's Wayland / X11 display
+if command -v xhost &>/dev/null; then
+    xhost +si:localuser:root 2>/dev/null || xhost + 2>/dev/null || true
+fi
+
+# Determine Wayland socket
+WL_SOCK="${WAYLAND_DISPLAY:-wayland-1}"
+if [[ ! -S "${XDG_RUNTIME_DIR}/${WL_SOCK}" ]] && [[ -S "${XDG_RUNTIME_DIR}/wayland-0" ]]; then
+    WL_SOCK="wayland-0"
+fi
+
+# Execute Calamares with preserved display environment and log output
+exec sudo -E \
+    WAYLAND_DISPLAY="${WL_SOCK}" \
+    XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/1000}" \
+    QT_QPA_PLATFORM="wayland;xcb" \
+    calamares -d "$@"

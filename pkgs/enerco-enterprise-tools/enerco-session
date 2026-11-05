@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# EnercoOS Smart Session Wrapper
+# Detects hypervisors (VirtualBox, VMware, Hyper-V, QEMU) and GPU hardware
+# and applies optimal Wayland / Hyprland compatibility parameters.
+# ==============================================================================
+
+set -e
+
+# Detect Virtualization
+VIRT_TYPE=$(systemd-detect-virt 2>/dev/null || echo "none")
+
+# Detect Graphics Hardware
+GPU_INFO=$(lspci 2>/dev/null | grep -E "VGA|3D|Display" || echo "")
+
+echo "[enerco-session] Detected virtualization: ${VIRT_TYPE}"
+echo "[enerco-session] Detected GPU hardware: ${GPU_INFO}"
+
+# General Wayland Environment Defaults
+export XDG_CURRENT_DESKTOP=Hyprland
+export XDG_SESSION_TYPE=wayland
+export XDG_SESSION_DESKTOP=Hyprland
+export GDK_BACKEND="wayland,x11,*"
+export QT_QPA_PLATFORM="wayland;xcb"
+export SDL_VIDEODRIVER=wayland
+export CLUTTER_BACKEND=wayland
+
+# Virtual Machine optimizations (VirtualBox VMSVGA / VMware SVGA / QEMU VirtIO)
+if [[ "${VIRT_TYPE}" =~ (oracle|vmware|microsoft|qemu|kvm) ]] || echo "${GPU_INFO}" | grep -iqE "vmware|virtualbox|qemu"; then
+    echo "[enerco-session] Applying virtual machine compatibility flags..."
+    export WLR_NO_HARDWARE_CURSORS=1
+    export WLR_RENDERER_ALLOW_SOFTWARE=1
+    export AQ_NO_MODIFIERS=1
+    export LIBGL_ALWAYS_SOFTWARE=1
+fi
+
+# NVIDIA GPU optimizations
+if echo "${GPU_INFO}" | grep -iq "nvidia"; then
+    echo "[enerco-session] Applying NVIDIA Wayland environment flags..."
+    export LIBVA_DRIVER_NAME=nvidia
+    export GBM_BACKEND=nvidia-drm
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    export WLR_NO_HARDWARE_CURSORS=1
+    export AQ_NO_MODIFIERS=1
+fi
+
+# Intel / AMD defaults
+if echo "${GPU_INFO}" | grep -iq "intel"; then
+    export LIBVA_DRIVER_NAME=iHD
+fi
+
+# Select optimal configuration file (Lua preferred in Hyprland 0.57+)
+CONFIG_ARG=()
+if [[ -f "${HOME}/.config/hypr/hyprland.lua" ]]; then
+    CONFIG_ARG=(--config "${HOME}/.config/hypr/hyprland.lua")
+elif [[ -f "${HOME}/.config/hypr/hyprland.conf" ]]; then
+    CONFIG_ARG=(--config "${HOME}/.config/hypr/hyprland.conf")
+fi
+
+# Fail-safe background launcher: ensures wallpaper, waybar, and dunst start reliably
+(
+    for i in {1..60}; do
+        if [[ -S "${XDG_RUNTIME_DIR}/wayland-1" ]]; then
+            export WAYLAND_DISPLAY="wayland-1"
+            break
+        elif [[ -S "${XDG_RUNTIME_DIR}/wayland-0" ]]; then
+            export WAYLAND_DISPLAY="wayland-0"
+            break
+        elif [[ -n "${WAYLAND_DISPLAY:-}" && -S "${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY}" ]]; then
+            break
+        fi
+        sleep 0.2
+    done
+    if [[ -n "${WAYLAND_DISPLAY:-}" ]]; then
+        sleep 0.5
+        pgrep -x swaybg >/dev/null || swaybg -i /usr/share/backgrounds/enerco-mac.png -m fill &
+        pgrep -x waybar >/dev/null || waybar &
+        pgrep -x dunst  >/dev/null || dunst &
+        pgrep -f enerco-welcome >/dev/null || /usr/local/bin/enerco-welcome &
+    fi
+) &
+
+# Launch Hyprland through official start-hyprland watchdog wrapper if present
+if command -v start-hyprland &>/dev/null; then
+    exec start-hyprland -- "${CONFIG_ARG[@]}" "$@"
+else
+    exec Hyprland "${CONFIG_ARG[@]}" "$@"
+fi

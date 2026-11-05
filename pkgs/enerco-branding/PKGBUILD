@@ -1,0 +1,24 @@
+# Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
+pkgname=enerco-branding
+pkgver=1.0.0
+pkgrel=3
+pkgdesc="Visual identity, wallpapers, and logos for EnercoOS"
+arch=('any')
+url="https://enerco.internal"
+license=('Proprietary')
+source=(
+    "enerco-mac.png"
+    "enerco-mac.svg"
+    "enerco-logo.svg"
+)
+sha256sums=('SKIP' 'SKIP' 'SKIP')
+
+package() {
+    # Wallpapers
+    install -Dm644 "${srcdir}/enerco-mac.png" "${pkgdir}/usr/share/backgrounds/enerco-mac.png"
+    install -Dm644 "${srcdir}/enerco-mac.svg" "${pkgdir}/usr/share/backgrounds/enerco-mac.svg"
+
+    # Enterprise logo & icons
+    install -Dm644 "${srcdir}/enerco-logo.svg" "${pkgdir}/usr/share/pixmaps/enerco-logo.svg"
+    install -Dm644 "${srcdir}/enerco-logo.svg" "${pkgdir}/usr/share/icons/hicolor/scalable/apps/enerco-logo.svg"
+}

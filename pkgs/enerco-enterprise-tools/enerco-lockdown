@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# EnercoOS Enterprise Endpoint Security Hardening Tool
+# Enforces UFW rules, kernel network parameters, and endpoint isolation.
+# ==============================================================================
+
+set -euo pipefail
+
+if [[ $EUID -ne 0 ]]; then
+   echo "[ERROR] enerco-lockdown must be run as root."
+   exit 1
+fi
+
+echo "=========================================================="
+echo "    PT MEGA TAMA ENERCO - ENDPOINT SECURITY HARDENING    "
+echo "=========================================================="
+
+echo "[1/4] Applying Enterprise Firewall Policies..."
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow from 10.0.0.0/8 comment "Internal Corporate Subnet"
+ufw allow from 172.16.0.0/12 comment "Internal VPN Subnet"
+ufw allow from 192.168.0.0/16 comment "Local Site Network"
+ufw --force enable
+echo "Firewall active and enabled on boot."
+
+echo "[2/4] Applying Kernel Security Parameters..."
+sysctl -p /etc/sysctl.d/99-enerco-security.conf 2>/dev/null || true
+
+echo "[3/4] Updating CA Certificate Trust Anchor..."
+update-ca-trust
+
+echo "[4/4] Locking Down Insecure Network Protocols..."
+systemctl disable --now rpcbind.service 2>/dev/null || true
+systemctl disable --now avahi-daemon.service 2>/dev/null || true
+
+echo "=========================================================="
+echo " EnercoOS Endpoint Hardening Complete. System is compliant."
+echo "=========================================================="
+
