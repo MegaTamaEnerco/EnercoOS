@@ -1,21 +1,23 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-enterprise-tools
 pkgver=1.0.0
-pkgrel=7
-pkgdesc="Enterprise tooling, session initialization, MTERP launcher, and security lockdown for EnercoOS"
+pkgrel=8
+pkgdesc="Enterprise tooling, session initialization, MTERP launcher, and macOS system menus for EnercoOS"
 arch=('any')
 url="https://enerco.internal"
 license=('Proprietary')
-depends=('bash' 'chromium' 'ufw' 'wireguard-tools' 'openvpn' 'python' 'python-gobject' 'gtk3')
+depends=('bash' 'chromium' 'ufw' 'wireguard-tools' 'openvpn' 'python' 'python-gobject' 'gtk3' 'rofi')
 source=(
     "enerco-session"
     "enerco-lockdown"
     "enerco-welcome"
     "enerco-installer"
+    "enerco-apple-menu"
+    "enerco-control-center"
     "mterp.desktop"
     "sysctl-enerco-security.conf"
 )
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 package() {
     # Binaries and session wrappers
@@ -23,6 +25,8 @@ package() {
     install -Dm755 "${srcdir}/enerco-lockdown" "${pkgdir}/usr/local/bin/enerco-lockdown"
     install -Dm755 "${srcdir}/enerco-welcome" "${pkgdir}/usr/local/bin/enerco-welcome"
     install -Dm755 "${srcdir}/enerco-installer" "${pkgdir}/usr/local/bin/enerco-installer"
+    install -Dm755 "${srcdir}/enerco-apple-menu" "${pkgdir}/usr/local/bin/enerco-apple-menu"
+    install -Dm755 "${srcdir}/enerco-control-center" "${pkgdir}/usr/local/bin/enerco-control-center"
 
     # Enterprise application launcher
     install -Dm644 "${srcdir}/mterp.desktop" "${pkgdir}/usr/share/applications/mterp.desktop"

@@ -136,18 +136,20 @@ hl.config({
 -- Keybindings
 local mainMod = "SUPER"
 
--- Applications & Windows
-hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + C", hl.dsp.window.close())
-hl.bind(mainMod .. " + M", hl.dsp.exit())
-hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + space", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("chromium --app=https://mterp.internal --ozone-platform=wayland"))
-hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("/usr/local/bin/enerco-installer"))
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("killall waybar 2>/dev/null; waybar &"))
-hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
+-- macOS Native Keybindings
+hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + space",  hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + W",      hl.dsp.window.close())
+hl.bind(mainMod .. " + Q",      hl.dsp.window.close())
+hl.bind(mainMod .. " + E",      hl.dsp.exec_cmd(fileManager))
+hl.bind(mainMod .. " + Tab",    hl.dsp.exec_cmd("rofi -show window"))
+hl.bind(mainMod .. " + L",      hl.dsp.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd("chromium --app=https://mterp.internal --ozone-platform=wayland"))
+hl.bind(mainMod .. " + I",      hl.dsp.exec_cmd("/usr/local/bin/enerco-installer"))
+hl.bind(mainMod .. " + M",      hl.dsp.exit())
+hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + J",      hl.dsp.layout("togglesplit"))
+hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("killall waybar 2>/dev/null; waybar &"))
 
 -- Navigation (Focus)
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))

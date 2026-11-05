@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# EnercoOS macOS Apple / System Menu Trigger
+# ==============================================================================
+set -euo pipefail
+
+MENU_THEME="/etc/skel/.config/rofi/apple-menu.rasi"
+if [[ -f "${HOME}/.config/rofi/apple-menu.rasi" ]]; then
+    MENU_THEME="${HOME}/.config/rofi/apple-menu.rasi"
+fi
+
+CHOICE=$(printf "ℹ️  About This Workstation\n⚙️  System Settings...\n📊 Activity Monitor\n🔒 Lock Screen\n🚪 Log Out Enerco...\n🔄 Restart...\n⏻  Shut Down..." | rofi -dmenu -theme "${MENU_THEME}" -p "EnercoOS" || true)
+
+case "${CHOICE}" in
+    *"About This Workstation"*)
+        /usr/local/bin/enerco-welcome &
+        ;;
+    *"System Settings"*)
+        /usr/local/bin/enerco-installer &
+        ;;
+    *"Activity Monitor"*)
+        kitty -e htop &
+        ;;
+    *"Lock Screen"*)
+        hyprlock &
+        ;;
+    *"Log Out"*)
+        hyprctl dispatch exit
+        ;;
+    *"Restart"*)
+        systemctl reboot
+        ;;
+    *"Shut Down"*)
+        systemctl poweroff
+        ;;
+esac

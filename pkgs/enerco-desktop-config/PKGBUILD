@@ -1,18 +1,21 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-desktop-config
 pkgver=1.0.0
-pkgrel=10
-pkgdesc="macOS Tahoe Hyprland, Waybar, Rofi, Kitty, and SDDM configurations for EnercoOS"
+pkgrel=11
+pkgdesc="macOS Tahoe Hyprland, Waybar, Rofi, Kitty, Hyprlock, and SDDM configurations for EnercoOS"
 arch=('any')
 url="https://enerco.internal"
 license=('GPL3')
-depends=('hyprland' 'waybar' 'rofi' 'swaybg' 'kitty' 'dunst' 'sddm' 'inter-font' 'capitaine-cursors')
+depends=('hyprland' 'hyprlock' 'waybar' 'rofi' 'swaybg' 'kitty' 'dunst' 'sddm' 'inter-font' 'capitaine-cursors')
 source=(
     "hyprland.lua"
     "hyprland.conf"
     "waybar-config.jsonc"
     "waybar-style.css"
     "rofi-config.rasi"
+    "rofi-apple-menu.rasi"
+    "rofi-control-center.rasi"
+    "hyprlock.conf"
     "kitty.conf"
     "dunstrc"
     "sddm-enerco.conf"
@@ -20,7 +23,7 @@ source=(
     "gtk3-settings.ini"
     "gtk-mac.css"
 )
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 package() {
     # SDDM System Configuration
@@ -30,12 +33,18 @@ package() {
     install -Dm644 "${srcdir}/gtk3-settings.ini" "${pkgdir}/etc/gtk-3.0/settings.ini"
     install -Dm644 "${srcdir}/gtk3-settings.ini" "${pkgdir}/etc/gtk-4.0/settings.ini"
 
+    # System Hyprlock default
+    install -Dm644 "${srcdir}/hyprlock.conf" "${pkgdir}/etc/hypr/hyprlock.conf"
+
     # User Profile Template (/etc/skel/)
     install -Dm644 "${srcdir}/hyprland.lua" "${pkgdir}/etc/skel/.config/hypr/hyprland.lua"
     install -Dm644 "${srcdir}/hyprland.conf" "${pkgdir}/etc/skel/.config/hypr/hyprland.conf"
+    install -Dm644 "${srcdir}/hyprlock.conf" "${pkgdir}/etc/skel/.config/hypr/hyprlock.conf"
     install -Dm644 "${srcdir}/waybar-config.jsonc" "${pkgdir}/etc/skel/.config/waybar/config.jsonc"
     install -Dm644 "${srcdir}/waybar-style.css" "${pkgdir}/etc/skel/.config/waybar/style.css"
     install -Dm644 "${srcdir}/rofi-config.rasi" "${pkgdir}/etc/skel/.config/rofi/config.rasi"
+    install -Dm644 "${srcdir}/rofi-apple-menu.rasi" "${pkgdir}/etc/skel/.config/rofi/apple-menu.rasi"
+    install -Dm644 "${srcdir}/rofi-control-center.rasi" "${pkgdir}/etc/skel/.config/rofi/control-center.rasi"
     install -Dm644 "${srcdir}/kitty.conf" "${pkgdir}/etc/skel/.config/kitty/kitty.conf"
     install -Dm644 "${srcdir}/dunstrc" "${pkgdir}/etc/skel/.config/dunst/dunstrc"
     install -Dm644 "${srcdir}/zshrc" "${pkgdir}/etc/skel/.zshrc"
@@ -44,4 +53,3 @@ package() {
     install -Dm644 "${srcdir}/gtk3-settings.ini" "${pkgdir}/etc/skel/.config/gtk-4.0/settings.ini"
     install -Dm644 "${srcdir}/gtk-mac.css" "${pkgdir}/etc/skel/.config/gtk-4.0/gtk.css"
 }
-

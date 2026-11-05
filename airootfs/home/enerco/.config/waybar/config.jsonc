@@ -31,8 +31,8 @@
         ],
         "custom/apple-menu": {
             "format": "⚡ Enerco",
-            "tooltip-format": "PT Mega Tama Enerco (Super+Space)",
-            "on-click": "rofi -show drun"
+            "tooltip-format": "macOS System Menu",
+            "on-click": "/usr/local/bin/enerco-apple-menu"
         },
         "custom/active-app": {
             "format": "<b>Finder</b>",
@@ -119,7 +119,7 @@
         "custom/control-center": {
             "format": "",
             "tooltip": "Control Center",
-            "on-click": "pavucontrol"
+            "on-click": "/usr/local/bin/enerco-control-center"
         },
         "clock": {
             "format": "{:%a %b %e  %I:%M %p}",
@@ -130,6 +130,8 @@
         "name": "dock",
         "layer": "top",
         "position": "bottom",
+        "exclusive": false,
+        "passthrough": false,
         "height": 56,
         "margin-bottom": 10,
         "modules-center": [

@@ -68,6 +68,7 @@ qemu-guest-agent
 
 # Wayland Cupertino Desktop Stack (Hyprland + SDDM)
 hyprland
+hyprlock
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-gtk
 waybar
