@@ -34,3 +34,4 @@ case "${CHOICE}" in
         systemctl poweroff
         ;;
 esac
+

@@ -1,9 +1,9 @@
 ---
 componentName:  enerco
 welcomeStyleCalamares: false
-welcomeExpandingLogo: true
+welcomeExpandingLogo: false
 windowExpanding: normal
-windowSize: 1000px, 680px
+windowSize: 960px, 600px
 windowPlacement: center
 
 sidebar: widget
@@ -27,8 +27,8 @@ images:
     productWelcome:      "/usr/share/backgrounds/enerco-mac.png"
 
 style:
-   SidebarBackground:        "#161b22"
-   SidebarText:              "#f0f6fc"
+   SidebarBackground:        "#0b0e14"
+   SidebarText:              "#a1a1a6"
    SidebarBackgroundCurrent: "#0071e3"
    SidebarTextCurrent:       "#ffffff"
 

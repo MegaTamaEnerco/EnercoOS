@@ -22,4 +22,4 @@ exec sudo -E \
     WAYLAND_DISPLAY="${WL_SOCK}" \
     XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/1000}" \
     QT_QPA_PLATFORM="wayland;xcb" \
-    calamares -d "$@"
+    calamares "$@"

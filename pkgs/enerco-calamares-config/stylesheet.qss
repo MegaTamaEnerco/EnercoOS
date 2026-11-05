@@ -1,63 +1,130 @@
-/* Calamares Cupertino-style Qt Stylesheet for EnercoOS */
+/* Calamares macOS Tahoe Dark Glass Qt Stylesheet for EnercoOS */
 QWidget {
-    background-color: #0d1117;
-    color: #c9d1d9;
-    font-family: "Noto Sans", sans-serif;
+    background-color: #12151c;
+    color: #f5f5f7;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 10pt;
 }
 
 QDialog {
-    background-color: #161b22;
+    background-color: #161b26;
 }
 
-QTreeView, QListView, QTableView {
-    background-color: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 6px;
+/* Sidebar Navigation */
+#sidebarApp {
+    background-color: #0b0e14;
+    min-width: 190px;
+    max-width: 210px;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#logo {
+    padding: 12px 0px;
+    max-height: 56px;
+}
+
+/* Step Items */
+QListView {
+    background-color: transparent;
+    border: none;
+    font-size: 10pt;
+    font-weight: 500;
+    padding-top: 8px;
+}
+
+QListView::item {
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin: 2px 8px;
+    color: #a1a1a6;
+}
+
+QListView::item:selected {
+    background-color: #0071e3;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Suppress scrollbars in sidebar */
+#sidebarApp QScrollBar {
+    width: 0px;
+    height: 0px;
+}
+
+QTreeView, QTableView {
+    background-color: #181c24;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
     selection-background-color: #0071e3;
     selection-color: #ffffff;
 }
 
+/* Buttons (macOS Rounded Glass) */
 QPushButton {
-    background-color: #21262d;
-    border: 1px solid #30363d;
-    border-radius: 6px;
-    padding: 6px 16px;
-    color: #f0f6fc;
-    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 7px 18px;
+    color: #f5f5f7;
+    font-weight: 500;
+    min-height: 18px;
 }
 
 QPushButton:hover {
-    background-color: #30363d;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 QPushButton:pressed {
-    background-color: #1f6feb;
+    background-color: rgba(255, 255, 255, 0.25);
 }
 
-QPushButton:default {
+QPushButton:default, QPushButton#nextButton {
     background-color: #0071e3;
-    border-color: #0071e3;
+    border: 1px solid #0077ed;
     color: #ffffff;
+    font-weight: 600;
 }
 
-QLineEdit {
-    background-color: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 6px;
-    padding: 6px;
-    color: #f0f6fc;
+QPushButton:default:hover, QPushButton#nextButton:hover {
+    background-color: #0077ed;
 }
 
+QPushButton#cancelButton {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #86868b;
+}
+
+QPushButton#cancelButton:hover {
+    background-color: rgba(255, 69, 58, 0.15);
+    border-color: rgba(255, 69, 58, 0.3);
+    color: #ff453a;
+}
+
+/* Input Fields */
+QLineEdit, QComboBox {
+    background-color: #181c24;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 7px 12px;
+    color: #f5f5f7;
+}
+
+QComboBox::drop-down {
+    border: none;
+    padding-right: 8px;
+}
+
+/* Progress Bar */
 QProgressBar {
-    border: 1px solid #30363d;
-    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
     text-align: center;
-    background-color: #161b22;
+    background-color: #181c24;
+    height: 12px;
 }
 
 QProgressBar::chunk {
     background-color: #0071e3;
-    border-radius: 5px;
+    border-radius: 7px;
 }
-

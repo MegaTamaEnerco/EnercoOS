@@ -31,3 +31,4 @@ case "${CHOICE}" in
         kitty -e bash -c "sudo ufw status verbose; echo ''; fastfetch; echo 'Press Enter to close'; read" &
         ;;
 esac
+
