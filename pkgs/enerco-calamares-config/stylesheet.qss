@@ -1,4 +1,7 @@
-/* Calamares macOS Tahoe Dark Glass Qt Stylesheet for EnercoOS */
+/* ==============================================================================
+ * Calamares macOS Tahoe Dark Glass Qt Stylesheet for EnercoOS
+ * ============================================================================== */
+
 QWidget {
     background-color: #12151c;
     color: #f5f5f7;
@@ -10,47 +13,113 @@ QDialog {
     background-color: #161b26;
 }
 
-/* Sidebar Navigation */
+/* Suppress all scrollbars across Calamares completely */
+QScrollBar:horizontal {
+    height: 0px !important;
+    min-height: 0px !important;
+    max-height: 0px !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+QScrollBar:vertical {
+    width: 0px !important;
+    min-width: 0px !important;
+    max-width: 0px !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+QScrollBar::handle:horizontal,
+QScrollBar::handle:vertical,
+QScrollBar::add-line:horizontal,
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:horizontal,
+QScrollBar::sub-line:vertical,
+QScrollBar::add-page:horizontal,
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:horizontal,
+QScrollBar::sub-page:vertical {
+    width: 0px !important;
+    height: 0px !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+/* Sidebar Container */
 #sidebarApp {
     background-color: #0b0e14;
-    min-width: 190px;
-    max-width: 210px;
+    min-width: 175px;
+    max-width: 175px;
     border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-#logo {
-    padding: 12px 0px;
-    max-height: 56px;
+/* Sidebar Logo */
+#logoApp {
+    padding: 12px 0px 6px 0px;
+    max-height: 44px;
+    qproperty-alignment: AlignCenter;
 }
 
-/* Step Items */
-QListView {
+/* Sidebar Step List */
+#sidebarMenuApp,
+#sidebarApp QTreeView,
+#sidebarApp QListView {
     background-color: transparent;
     border: none;
-    font-size: 10pt;
+    outline: none;
+    font-size: 9.5pt;
     font-weight: 500;
-    padding-top: 8px;
+    qproperty-rootIsDecorated: false;
+    qproperty-indentation: 0;
 }
 
-QListView::item {
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin: 2px 8px;
-    color: #a1a1a6;
+#sidebarMenuApp::item,
+#sidebarApp QTreeView::item,
+#sidebarApp QListView::item {
+    padding: 6px 12px;
+    border-radius: 6px;
+    margin: 2px 6px;
+    color: #86868b;
 }
 
-QListView::item:selected {
+#sidebarMenuApp::item:selected,
+#sidebarApp QTreeView::item:selected,
+#sidebarApp QListView::item:selected {
     background-color: #0071e3;
     color: #ffffff;
     font-weight: 600;
 }
 
-/* Suppress scrollbars in sidebar */
-#sidebarApp QScrollBar {
-    width: 0px;
-    height: 0px;
+/* Sidebar Bottom Buttons */
+#aboutButton {
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 4px 10px;
+    margin: 8px 14px;
+    font-size: 8.5pt;
+    color: #86868b;
+    max-width: 76px;
 }
 
+#aboutButton:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+}
+
+#debugButton {
+    max-width: 0px !important;
+    max-height: 0px !important;
+    min-width: 0px !important;
+    min-height: 0px !important;
+    padding: 0px !important;
+    margin: 0px !important;
+    border: none !important;
+    qproperty-visible: false;
+}
+
+/* Tables and Tree Views */
 QTreeView, QTableView {
     background-color: #181c24;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -79,15 +148,22 @@ QPushButton:pressed {
     background-color: rgba(255, 255, 255, 0.25);
 }
 
-QPushButton:default, QPushButton#nextButton {
+QPushButton:default,
+QPushButton#nextButton {
     background-color: #0071e3;
     border: 1px solid #0077ed;
     color: #ffffff;
     font-weight: 600;
 }
 
-QPushButton:default:hover, QPushButton#nextButton:hover {
+QPushButton:default:hover,
+QPushButton#nextButton:hover {
     background-color: #0077ed;
+}
+
+QPushButton#backButton {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #f5f5f7;
 }
 
 QPushButton#cancelButton {
@@ -121,7 +197,7 @@ QProgressBar {
     border-radius: 8px;
     text-align: center;
     background-color: #181c24;
-    height: 12px;
+    height: 14px;
 }
 
 QProgressBar::chunk {

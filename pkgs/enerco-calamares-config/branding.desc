@@ -3,7 +3,7 @@ componentName:  enerco
 welcomeStyleCalamares: false
 welcomeExpandingLogo: false
 windowExpanding: normal
-windowSize: 960px, 600px
+windowSize: 840px, 520px
 windowPlacement: center
 
 sidebar: widget
@@ -17,20 +17,18 @@ strings:
     shortVersionedName:  "EnercoOS 2026"
     bootloaderEntryName: "EnercoOS"
     productUrl:          "https://enerco.internal"
-    supportUrl:          "https://support.enerco.internal"
-    knownIssuesUrl:      "https://devops.enerco.internal/issues"
-    releaseNotesUrl:     "https://enerco.internal/releasenotes"
+    supportUrl:          ""
+    knownIssuesUrl:      ""
+    releaseNotesUrl:     ""
 
 images:
     productLogo:         "/usr/share/pixmaps/enerco-logo.svg"
     productIcon:         "/usr/share/pixmaps/enerco-logo.svg"
-    productWelcome:      "/usr/share/backgrounds/enerco-mac.png"
+    productWelcome:      "languages.png"
 
 style:
    SidebarBackground:        "#0b0e14"
-   SidebarText:              "#a1a1a6"
+   SidebarText:              "#86868b"
    SidebarBackgroundCurrent: "#0071e3"
    SidebarTextCurrent:       "#ffffff"
 
-slideshow:
-    - "/usr/share/backgrounds/enerco-mac.png"

@@ -172,7 +172,7 @@ hl.bind(mainMod .. " + E",      hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + Tab",    hl.dsp.exec_cmd("rofi -show window"))
 hl.bind(mainMod .. " + D",      hl.dsp.exec_cmd("hyprctl dispatch togglespecialworkspace"))
 hl.bind(mainMod .. " + L",      hl.dsp.exec_cmd("hyprlock"))
-hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd("chromium --app=https://mterp.internal --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist"))
+hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd("chromium --app=https://mterp.megatama-enerco.com --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist"))
 hl.bind(mainMod .. " + I",      hl.dsp.exec_cmd("/usr/local/bin/enerco-installer"))
 hl.bind(mainMod .. " + M",      hl.dsp.exit())
 hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
@@ -207,7 +207,7 @@ hl.window_rule({
     name   = "float-calamares",
     match  = { class = "calamares" },
     float  = true,
-    size   = "960 600",
+    size   = "840 520",
     center = true,
 })
 

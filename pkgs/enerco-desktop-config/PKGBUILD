@@ -1,7 +1,7 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-desktop-config
 pkgver=1.0.0
-pkgrel=14
+pkgrel=15
 pkgdesc="macOS Tahoe Hyprland, Waybar, Rofi, Kitty, Hyprlock, and SDDM configurations for EnercoOS"
 arch=('any')
 url="https://enerco.internal"

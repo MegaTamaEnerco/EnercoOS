@@ -17,3 +17,4 @@ else
     # Launch new instance in background
     "${LAUNCH_CMD[@]}" &
 fi
+

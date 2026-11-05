@@ -11,7 +11,7 @@
         "exclusive": true,
         "passthrough": false,
         "modules-left": [
-            "custom/apple-menu",
+            "image#apple-menu",
             "custom/active-app",
             "custom/menu-file",
             "custom/menu-edit",
@@ -34,9 +34,10 @@
             "custom/control-center",
             "clock"
         ],
-        "custom/apple-menu": {
-            "format": "   ",
-            "tooltip-format": "Apple System Menu",
+        "image#apple-menu": {
+            "path": "/usr/share/pixmaps/whitesur-apple.svg",
+            "size": 18,
+            "tooltip": false,
             "on-click": "/usr/local/bin/enerco-menubar apple"
         },
         "custom/active-app": {
