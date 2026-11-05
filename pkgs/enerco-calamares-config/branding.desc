@@ -1,0 +1,36 @@
+---
+componentName:  enerco
+welcomeStyleCalamares: false
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 1000px, 680px
+windowPlacement: center
+
+sidebar: widget
+navigation: widget
+
+strings:
+    productName:         "EnercoOS"
+    version:             "2026 Enterprise"
+    shortVersion:        "2026"
+    versionedName:       "EnercoOS 2026 Enterprise Workstation"
+    shortVersionedName:  "EnercoOS 2026"
+    bootloaderEntryName: "EnercoOS"
+    productUrl:          "https://enerco.internal"
+    supportUrl:          "https://support.enerco.internal"
+    knownIssuesUrl:      "https://devops.enerco.internal/issues"
+    releaseNotesUrl:     "https://enerco.internal/releasenotes"
+
+images:
+    productLogo:         "/usr/share/pixmaps/enerco-logo.svg"
+    productIcon:         "/usr/share/pixmaps/enerco-logo.svg"
+    productWelcome:      "/usr/share/backgrounds/enerco-mac.png"
+
+style:
+   SidebarBackground:        "#161b22"
+   SidebarText:              "#f0f6fc"
+   SidebarBackgroundCurrent: "#0071e3"
+   SidebarTextCurrent:       "#ffffff"
+
+slideshow:
+    - "/usr/share/backgrounds/enerco-mac.png"

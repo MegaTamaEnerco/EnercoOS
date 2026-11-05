@@ -1,0 +1,58 @@
+# Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
+pkgname=calamares
+pkgver=3.3.11
+pkgrel=2
+pkgdesc="Distribution-independent system installer with Qt6 framework"
+arch=('x86_64')
+url="https://calamares.io"
+license=('GPL3')
+depends=(
+    'kcoreaddons'
+    'kconfig'
+    'ki18n'
+    'kservice'
+    'kpmcore'
+    'polkit-qt6'
+    'yaml-cpp'
+    'parted'
+    'xkeyboard-config'
+    'libxkbcommon'
+    'hwinfo'
+    'qt6-svg'
+    'qt6-declarative'
+    'boost-libs'
+    'python'
+)
+makedepends=(
+    'cmake'
+    'extra-cmake-modules'
+    'git'
+    'boost'
+    'qt6-tools'
+    'kpmcore'
+    'ninja'
+)
+source=("https://github.com/calamares/calamares/releases/download/v${pkgver}/calamares-${pkgver}.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+    cd "calamares-${pkgver}"
+
+    cmake -B build -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_INSTALL_LIBDIR=lib \
+        -DCMAKE_INSTALL_SYSCONFDIR=/etc \
+        -DWITH_QT6=ON \
+        -DINSTALL_CONFIG=OFF \
+        -DINSTALL_POLKIT=ON \
+        -DWITH_PYTHONQT=OFF
+
+    cmake --build build
+}
+
+package() {
+    cd "calamares-${pkgver}"
+    DESTDIR="${pkgdir}" cmake --install build
+}
+

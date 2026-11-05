@@ -1,0 +1,66 @@
+# Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
+pkgname=enerco-calamares-config
+pkgver=1.0.0
+pkgrel=9
+pkgdesc="Enterprise Calamares installer configuration, branding, and modules for EnercoOS"
+arch=('any')
+url="https://enerco.internal"
+license=('GPL3')
+depends=('calamares' 'enerco-branding' 'grub' 'efibootmgr')
+source=(
+    "settings.conf"
+    "calamares.desktop"
+    "branding.desc"
+    "stylesheet.qss"
+    "welcome.conf"
+    "locale.conf"
+    "keyboard.conf"
+    "partition.conf"
+    "users.conf"
+    "unpackfs.conf"
+    "mount.conf"
+    "fstab.conf"
+    "machineid.conf"
+    "umount.conf"
+    "shellprocess.conf"
+    "initcpiocfg.conf"
+    "initcpio.conf"
+    "displaymanager.conf"
+    "grubcfg.conf"
+    "bootloader.conf"
+    "services-systemd.conf"
+    "finished.conf"
+)
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+
+package() {
+    # Main Calamares configuration
+    install -Dm644 "${srcdir}/settings.conf" "${pkgdir}/etc/calamares/settings.conf"
+
+    # Modules
+    install -Dm644 "${srcdir}/welcome.conf" "${pkgdir}/etc/calamares/modules/welcome.conf"
+    install -Dm644 "${srcdir}/locale.conf" "${pkgdir}/etc/calamares/modules/locale.conf"
+    install -Dm644 "${srcdir}/keyboard.conf" "${pkgdir}/etc/calamares/modules/keyboard.conf"
+    install -Dm644 "${srcdir}/partition.conf" "${pkgdir}/etc/calamares/modules/partition.conf"
+    install -Dm644 "${srcdir}/users.conf" "${pkgdir}/etc/calamares/modules/users.conf"
+    install -Dm644 "${srcdir}/unpackfs.conf" "${pkgdir}/etc/calamares/modules/unpackfs.conf"
+    install -Dm644 "${srcdir}/mount.conf" "${pkgdir}/etc/calamares/modules/mount.conf"
+    install -Dm644 "${srcdir}/fstab.conf" "${pkgdir}/etc/calamares/modules/fstab.conf"
+    install -Dm644 "${srcdir}/machineid.conf" "${pkgdir}/etc/calamares/modules/machineid.conf"
+    install -Dm644 "${srcdir}/umount.conf" "${pkgdir}/etc/calamares/modules/umount.conf"
+    install -Dm644 "${srcdir}/shellprocess.conf" "${pkgdir}/etc/calamares/modules/shellprocess.conf"
+    install -Dm644 "${srcdir}/initcpiocfg.conf" "${pkgdir}/etc/calamares/modules/initcpiocfg.conf"
+    install -Dm644 "${srcdir}/initcpio.conf" "${pkgdir}/etc/calamares/modules/initcpio.conf"
+    install -Dm644 "${srcdir}/displaymanager.conf" "${pkgdir}/etc/calamares/modules/displaymanager.conf"
+    install -Dm644 "${srcdir}/grubcfg.conf" "${pkgdir}/etc/calamares/modules/grubcfg.conf"
+    install -Dm644 "${srcdir}/bootloader.conf" "${pkgdir}/etc/calamares/modules/bootloader.conf"
+    install -Dm644 "${srcdir}/services-systemd.conf" "${pkgdir}/etc/calamares/modules/services-systemd.conf"
+    install -Dm644 "${srcdir}/finished.conf" "${pkgdir}/etc/calamares/modules/finished.conf"
+
+    # Branding
+    install -Dm644 "${srcdir}/branding.desc" "${pkgdir}/etc/calamares/branding/enerco/branding.desc"
+    install -Dm644 "${srcdir}/stylesheet.qss" "${pkgdir}/etc/calamares/branding/enerco/stylesheet.qss"
+
+    # Desktop Launcher on User Desktop
+    install -Dm755 "${srcdir}/calamares.desktop" "${pkgdir}/etc/skel/Desktop/calamares.desktop"
+}

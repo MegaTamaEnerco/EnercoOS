@@ -1,0 +1,63 @@
+/* Calamares Cupertino-style Qt Stylesheet for EnercoOS */
+QWidget {
+    background-color: #0d1117;
+    color: #c9d1d9;
+    font-family: "Noto Sans", sans-serif;
+    font-size: 10pt;
+}
+
+QDialog {
+    background-color: #161b22;
+}
+
+QTreeView, QListView, QTableView {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    selection-background-color: #0071e3;
+    selection-color: #ffffff;
+}
+
+QPushButton {
+    background-color: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 6px 16px;
+    color: #f0f6fc;
+    font-weight: 600;
+}
+
+QPushButton:hover {
+    background-color: #30363d;
+}
+
+QPushButton:pressed {
+    background-color: #1f6feb;
+}
+
+QPushButton:default {
+    background-color: #0071e3;
+    border-color: #0071e3;
+    color: #ffffff;
+}
+
+QLineEdit {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 6px;
+    color: #f0f6fc;
+}
+
+QProgressBar {
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    text-align: center;
+    background-color: #161b22;
+}
+
+QProgressBar::chunk {
+    background-color: #0071e3;
+    border-radius: 5px;
+}
+
