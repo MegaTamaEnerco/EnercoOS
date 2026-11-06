@@ -6,20 +6,43 @@
 
 set -e
 
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/1000}"
+
 # Permit local root to connect to user's Wayland / X11 display
 if command -v xhost &>/dev/null; then
     xhost +si:localuser:root 2>/dev/null || xhost + 2>/dev/null || true
 fi
 
-# Determine Wayland socket
+# Determine active Wayland socket (waybar/macshell/rofi may not always export WAYLAND_DISPLAY)
 WL_SOCK="${WAYLAND_DISPLAY:-wayland-1}"
-if [[ ! -S "${XDG_RUNTIME_DIR}/${WL_SOCK}" ]] && [[ -S "${XDG_RUNTIME_DIR}/wayland-0" ]]; then
-    WL_SOCK="wayland-0"
+if [[ ! -S "${XDG_RUNTIME_DIR}/${WL_SOCK}" ]]; then
+    if [[ -S "${XDG_RUNTIME_DIR}/wayland-0" ]]; then
+        WL_SOCK="wayland-0"
+    elif [[ -S "${XDG_RUNTIME_DIR}/wayland-1" ]]; then
+        WL_SOCK="wayland-1"
+    else
+        for sock in "${XDG_RUNTIME_DIR}"/wayland-[0-9]*; do
+            if [[ -S "${sock}" ]]; then
+                WL_SOCK="$(basename "${sock}")"
+                break
+            fi
+        done
+    fi
 fi
 
-# Execute Calamares with preserved display environment and log output
-exec sudo -E \
+# Prevent duplicate Calamares instances
+if pgrep -x calamares >/dev/null 2>&1; then
+    hyprctl dispatch focuswindow "class:^(calamares)$" 2>/dev/null || true
+    exit 0
+fi
+
+# Execute Calamares with preserved display & rendering environment
+exec sudo -E env \
     WAYLAND_DISPLAY="${WL_SOCK}" \
-    XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/1000}" \
+    XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR}" \
+    DISPLAY="${DISPLAY:-:0}" \
     QT_QPA_PLATFORM="wayland;xcb" \
-    calamares "$@"
+    QT_WAYLAND_DISABLE_WINDOWDECORATION="1" \
+    LIBGL_ALWAYS_SOFTWARE="${LIBGL_ALWAYS_SOFTWARE:-}" \
+    GALLIUM_DRIVER="${GALLIUM_DRIVER:-}" \
+    calamares "$@" >/tmp/enerco-installer.log 2>&1

@@ -1,5 +1,2 @@
-# Passwordless sudo for Enerco live session user
-root ALL=(ALL:ALL) ALL
-%wheel ALL=(ALL:ALL) NOPASSWD: ALL
+Defaults:enerco !use_pty, !requiretty
 enerco ALL=(ALL:ALL) NOPASSWD: ALL
-

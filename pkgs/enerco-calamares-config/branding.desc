@@ -8,6 +8,7 @@ windowPlacement: center
 
 sidebar: widget
 navigation: widget
+slideshow: []
 
 strings:
     productName:         "EnercoOS"
@@ -24,11 +25,10 @@ strings:
 images:
     productLogo:         "/usr/share/pixmaps/enerco-logo.svg"
     productIcon:         "/usr/share/pixmaps/enerco-logo.svg"
-    productWelcome:      "languages.png"
+    productWelcome:      "/usr/share/pixmaps/enerco-logo.svg"
 
 style:
    SidebarBackground:        "#0b0e14"
    SidebarText:              "#86868b"
    SidebarBackgroundCurrent: "#0071e3"
    SidebarTextCurrent:       "#ffffff"
-

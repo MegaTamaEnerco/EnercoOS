@@ -125,8 +125,8 @@ class TestF03RebuildDetectionBoundary(unittest.TestCase):
         calamares_content = read_repo_file("pkgs/enerco-calamares-config/PKGBUILD")
         self.assertEqual(
             extract_version(calamares_content),
-            "1.0.0-16",
-            "enerco-calamares-config version must extract exactly as 1.0.0-16",
+            "1.0.0-17",
+            "enerco-calamares-config version must extract exactly as 1.0.0-17",
         )
         desktop_content = read_repo_file("pkgs/enerco-desktop-config/PKGBUILD")
         self.assertEqual(

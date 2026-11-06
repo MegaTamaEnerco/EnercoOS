@@ -54,5 +54,6 @@ build() {
 package() {
     cd "calamares-${pkgver}"
     DESTDIR="${pkgdir}" cmake --install build
+    rm -f "${pkgdir}/usr/share/applications/calamares.desktop"
 }
 
