@@ -19,7 +19,6 @@ file_permissions=(
   ["/etc/sudoers.d/00-liveuser"]="0:0:440"
   ["/etc/profile.d/enerco-autostart.sh"]="0:0:755"
   ["/etc/zprofile"]="0:0:644"
-  ["/etc/systemd/system-generators/systemd-gpt-auto-generator"]="0:0:755"
   ["/usr/local/bin/enerco-live-init"]="0:0:755"
   ["/usr/local/bin/nautilus"]="0:0:755"
   ["/home/enerco"]="1000:1000:755"

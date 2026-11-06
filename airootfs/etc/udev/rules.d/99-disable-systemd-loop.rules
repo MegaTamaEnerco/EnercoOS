@@ -1,0 +1,5 @@
+# Disable systemd 262 automatic loop-mounting on optical CD/DVD block devices (sr*)
+SUBSYSTEM=="block", KERNEL=="sr*", ENV{ID_PART_GPT_AUTO_ROOT_DISK_NEEDS_LOOP}="0"
+SUBSYSTEM=="block", KERNEL=="sr*", ENV{SYSTEMD_WANTS}-="systemd-loop@.service"
+SUBSYSTEM=="block", ENV{ID_CDROM}=="1", ENV{ID_PART_GPT_AUTO_ROOT_DISK_NEEDS_LOOP}="0"
+SUBSYSTEM=="block", ENV{ID_CDROM}=="1", ENV{SYSTEMD_WANTS}-="systemd-loop@.service"

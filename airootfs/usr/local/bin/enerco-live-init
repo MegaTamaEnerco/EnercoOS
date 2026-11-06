@@ -7,17 +7,8 @@ LIVE_USER="enerco"
 # Populate user home with official desktop skel configs
 if [[ -d "/etc/skel" ]]; then
     mkdir -p "/home/${LIVE_USER}"
-    cp -rT /etc/skel "/home/${LIVE_USER}"
+    cp -rT /etc/skel "/home/${LIVE_USER}" 2>/dev/null || true
 fi
 
 # Ensure correct permissions for live user
 chown -R 1000:1000 "/home/${LIVE_USER}" 2>/dev/null || true
-
-# Ensure NetworkManager is active without blocking boot on wait-online
-systemctl mask NetworkManager-wait-online.service 2>/dev/null || true
-systemctl mask systemd-networkd-wait-online.service 2>/dev/null || true
-systemctl enable --now NetworkManager.service 2>/dev/null || true
-
-# Initialize CachyOS-grade high-performance ZRAM and IRQ balance
-systemctl start systemd-zram-setup@zram0.service 2>/dev/null || true
-systemctl start irqbalance.service 2>/dev/null || true
