@@ -11,7 +11,7 @@
         "exclusive": true,
         "passthrough": false,
         "modules-left": [
-            "custom/apple-menu",
+            "image#apple-menu",
             "custom/active-app",
             "custom/menu-file",
             "custom/menu-edit",
@@ -34,9 +34,10 @@
             "custom/control-center",
             "clock"
         ],
-        "custom/apple-menu": {
-            "format": "   ",
-            "tooltip-format": "Apple System Menu",
+        "image#apple-menu": {
+            "path": "/usr/share/pixmaps/whitesur-apple.svg",
+            "size": 18,
+            "tooltip": false,
             "on-click": "/usr/local/bin/enerco-menubar apple"
         },
         "custom/active-app": {
@@ -136,7 +137,7 @@
         "name": "dock",
         "layer": "top",
         "position": "bottom",
-        "exclusive": false,
+        "exclusive": true,
         "passthrough": false,
         "height": 56,
         "margin-bottom": 10,
@@ -164,7 +165,7 @@
         "custom/dock-browser": {
             "format": "",
             "tooltip-format": "Safari / MTERP ERP",
-            "on-click": "/usr/local/bin/enerco-dock-launch chromium chromium --app=https://mterp.internal --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist"
+            "on-click": "/usr/local/bin/enerco-dock-launch chromium chromium --app=https://mterp.megatama-enerco.com --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist"
         },
         "custom/dock-terminal": {
             "format": "",

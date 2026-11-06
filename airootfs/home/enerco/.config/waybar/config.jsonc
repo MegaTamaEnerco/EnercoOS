@@ -136,7 +136,7 @@
         "name": "dock",
         "layer": "top",
         "position": "bottom",
-        "exclusive": false,
+        "exclusive": true,
         "passthrough": false,
         "height": 56,
         "margin-bottom": 10,
@@ -164,7 +164,7 @@
         "custom/dock-browser": {
             "format": "",
             "tooltip-format": "Safari / MTERP ERP",
-            "on-click": "/usr/local/bin/enerco-dock-launch chromium chromium --app=https://mterp.internal --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist"
+            "on-click": "/usr/local/bin/enerco-dock-launch chromium chromium --app=https://mterp.megatama-enerco.com --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist"
         },
         "custom/dock-terminal": {
             "format": "",

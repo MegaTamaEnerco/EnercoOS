@@ -1,0 +1,45 @@
+#!/bin/sh
+# ==============================================================================
+# EnercoOS MacShell Session Supervisor
+# Starts and supervises the macOS Tahoe Quickshell Desktop Environment
+# ==============================================================================
+
+export XDG_SESSION_TYPE="${XDG_SESSION_TYPE:-wayland}"
+export XDG_CURRENT_DESKTOP="${XDG_CURRENT_DESKTOP:-Hyprland}"
+export XDG_SESSION_DESKTOP="${XDG_SESSION_DESKTOP:-Hyprland}"
+export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-wayland;xcb}"
+export QS_ICON_THEME="${QS_ICON_THEME:-MacOS-Like-Dark}"
+
+# Wait for Wayland display socket
+i=0
+while [ "$i" -lt 50 ]; do
+    if [ -n "${WAYLAND_DISPLAY:-}" ] && [ -S "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/$WAYLAND_DISPLAY" ]; then break; fi
+    i=$((i + 1)); sleep 0.1
+done
+
+# If already running, exit
+if pgrep -u "$(id -u)" -f "(^|/)(qs|quickshell).*(-c|--config) MacShell" >/dev/null 2>&1; then
+    exit 0
+fi
+
+# Ensure user directories exist
+mkdir -p "$HOME/.config/quickshell" "$HOME/.config/macdock" "$HOME/.config/macbar" "$HOME/.local/state/macshell"
+
+# Seed default configs if missing
+if [ ! -f "$HOME/.config/macdock/pinned.json" ] && [ -f "/etc/skel/.config/macdock/pinned.json" ]; then
+    cp -n /etc/skel/.config/macdock/pinned.json "$HOME/.config/macdock/pinned.json" 2>/dev/null || true
+fi
+if [ ! -f "$HOME/.config/macdock/settings.json" ] && [ -f "/etc/skel/.config/macdock/settings.json" ]; then
+    cp -n /etc/skel/.config/macdock/settings.json "$HOME/.config/macdock/settings.json" 2>/dev/null || true
+fi
+
+# Ensure quickshell config symlink or path exists in user dir if needed
+if [ ! -d "$HOME/.config/quickshell/MacShell" ] && [ -d "/etc/xdg/quickshell/MacShell" ]; then
+    ln -sfn /etc/xdg/quickshell/MacShell "$HOME/.config/quickshell/MacShell" 2>/dev/null || true
+fi
+if [ ! -d "$HOME/.config/quickshell/MacLock" ] && [ -d "/etc/xdg/quickshell/MacLock" ]; then
+    ln -sfn /etc/xdg/quickshell/MacLock "$HOME/.config/quickshell/MacLock" 2>/dev/null || true
+fi
+
+# Run MacShell
+exec qs -c MacShell

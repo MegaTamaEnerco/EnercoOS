@@ -1,7 +1,7 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-branding
 pkgver=1.0.0
-pkgrel=5
+pkgrel=6
 pkgdesc="Visual identity, wallpapers, and logos for EnercoOS"
 arch=('any')
 url="https://enerco.internal"

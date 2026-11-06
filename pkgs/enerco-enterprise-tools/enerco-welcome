@@ -162,7 +162,7 @@ class EnercoWelcomeWindow(Gtk.Window):
         self.save_pref()
         subprocess.Popen([
             "chromium",
-            "--app=https://mterp.internal",
+            "--app=https://mterp.megatama-enerco.com",
             "--ozone-platform=wayland",
             "--enable-features=UseOzonePlatform"
         ])

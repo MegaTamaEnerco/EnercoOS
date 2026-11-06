@@ -109,10 +109,11 @@ case "${MENU}" in
         LINES=5
         CHOICE=$(printf "EnercoOS Workstation Help\nMTERP ERP Documentation\n────────────────────────\nmacOS Keyboard Shortcuts\nAbout This Workstation" | rofi -dmenu -theme-str "window { location: northwest; anchor: northwest; x-offset: ${OFFSET}px; y-offset: 32px; width: ${WIDTH}px; border-radius: 10px; } listview { lines: ${LINES}; }" -theme "${THEME}" -p "Help" || true)
         case "${CHOICE}" in
-            *"Help"*) chromium --app=https://support.enerco.internal & ;;
-            *"MTERP"*) chromium --app=https://mterp.internal & ;;
+            *"Help"*) chromium --app=https://org.megatama-enerco.com & ;;
+            *"MTERP"*) chromium --app=https://mterp.megatama-enerco.com & ;;
             *"Shortcuts"*) /usr/local/bin/enerco-welcome & ;;
             *"About"*) /usr/local/bin/enerco-welcome & ;;
         esac
         ;;
 esac
+

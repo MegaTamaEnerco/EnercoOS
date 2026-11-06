@@ -1,7 +1,7 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-enterprise-tools
 pkgver=1.0.0
-pkgrel=11
+pkgrel=12
 pkgdesc="Enterprise tooling, session initialization, MTERP launcher, and CachyOS-grade performance tuning for EnercoOS"
 arch=('any')
 url="https://enerco.internal"

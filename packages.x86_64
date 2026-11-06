@@ -117,11 +117,24 @@ xkeyboard-config
 libxkbcommon
 squashfs-tools
 
+# MacShell & Quickshell Runtime Dependencies
+quickshell
+qt6-multimedia
+qt6-multimedia-ffmpeg
+qt6-shadertools
+upower
+playerctl
+hypridle
+python-pillow
+librsvg
+
 # ==============================================================================
 # In-Tree Standard EnercoOS Packages (Built from pkgs/ into localrepo)
 # ==============================================================================
 calamares
 enerco-branding
+macos-like-icon-theme
+enerco-macshell
 enerco-desktop-config
 enerco-enterprise-tools
 enerco-calamares-config

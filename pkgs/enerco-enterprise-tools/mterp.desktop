@@ -2,11 +2,12 @@
 Name=MTERP Console
 GenericName=Enterprise Resource Planning
 Comment=PT Mega Tama Enerco Management Interface
-Exec=chromium --app=https://mterp.internal --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist --user-data-dir=%h/.config/mterp-profile
+Exec=chromium --app=https://mterp.megatama-enerco.com --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist --user-data-dir=%h/.config/mterp-profile
 Icon=enerco-logo
 Terminal=false
 Type=Application
 Categories=Office;Finance;Network;
 StartupNotify=true
-StartupWMClass=mterp.internal
+StartupWMClass=mterp.megatama-enerco.com
+URL=https://mterp.megatama-enerco.com
 

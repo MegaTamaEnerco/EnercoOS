@@ -1,0 +1,27 @@
+# Maintainer: PT Mega Tama Enerco <devops@megatama-enerco.com>
+pkgname=macos-like-icon-theme
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="macOS Tahoe style icon themes for EnercoOS (MacOS-Like-Dark and MacOS-Like-Light)"
+arch=('any')
+url="https://github.com/Scrimas/MacOS-Like"
+license=('GPL3')
+options=('!strip' '!debug')
+depends=('papirus-icon-theme' 'hicolor-icon-theme')
+makedepends=('git' 'python-pillow' 'librsvg')
+source=("macos-like::git+https://github.com/Scrimas/MacOS-Like.git")
+sha256sums=('SKIP')
+
+build() {
+    cd "${srcdir}/macos-like"
+    export XDG_DATA_HOME="${srcdir}/data"
+    mkdir -p "${XDG_DATA_HOME}"
+    ./setup.sh
+}
+
+package() {
+    install -dm755 "${pkgdir}/usr/share/icons"
+    cp -dr --no-preserve=ownership "${srcdir}/data/icons/MacOS-Like-Dark" "${pkgdir}/usr/share/icons/"
+    cp -dr --no-preserve=ownership "${srcdir}/data/icons/MacOS-Like-Light" "${pkgdir}/usr/share/icons/"
+}
+

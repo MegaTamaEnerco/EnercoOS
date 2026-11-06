@@ -3,7 +3,7 @@
 
 iso_name="enercoos"
 iso_label="ENERCO_$(date +%Y%m)"
-iso_publisher="PT Mega Tama Enerco <https://enerco.internal>"
+iso_publisher="PT Mega Tama Enerco <https://org.megatama-enerco.com>"
 iso_application="EnercoOS Enterprise Workstation"
 iso_version="$(date +%Y.%m.%d)"
 install_dir="arch"

@@ -31,6 +31,8 @@ done
 # Define build order (Calamares dependencies and assets first)
 PACKAGES=(
     "enerco-branding"
+    "macos-like-icon-theme"
+    "enerco-macshell"
     "enerco-desktop-config"
     "enerco-enterprise-tools"
     "calamares"

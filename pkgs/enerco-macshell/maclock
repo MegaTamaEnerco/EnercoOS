@@ -1,0 +1,19 @@
+#!/bin/sh
+# ==============================================================================
+# EnercoOS MacLock Invoker
+# Locks the workstation using macOS Tahoe Liquid Glass lockscreen
+# ==============================================================================
+
+# Ensure quickshell config symlink exists
+mkdir -p "$HOME/.config/quickshell"
+if [ ! -d "$HOME/.config/quickshell/MacLock" ] && [ -d "/etc/xdg/quickshell/MacLock" ]; then
+    ln -sfn /etc/xdg/quickshell/MacLock "$HOME/.config/quickshell/MacLock" 2>/dev/null || true
+fi
+
+if [ -f "$HOME/.config/quickshell/MacLock/lock-via-ipc.sh" ]; then
+    exec sh "$HOME/.config/quickshell/MacLock/lock-via-ipc.sh"
+elif [ -f "/etc/xdg/quickshell/MacLock/lock-via-ipc.sh" ]; then
+    exec sh "/etc/xdg/quickshell/MacLock/lock-via-ipc.sh"
+else
+    exec hyprlock
+fi
