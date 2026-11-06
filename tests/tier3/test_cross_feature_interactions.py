@@ -44,11 +44,10 @@ class TestTier3CrossFeatureInteractions(unittest.TestCase):
         self.assertIn("DisplayServer=wayland", sddm_conf)
 
     def test_interaction_02_macshell_and_waybar_fallback(self):
-        """T3-02: MacShell & Waybar: macshell-start supervisor falls back to Waybar and Dunst on failure."""
+        """T3-02: MacShell Supervisor: macshell-start supervises MacShell and deconflicts dunst."""
         supervisor = read_repo_file("pkgs/enerco-macshell/macshell-start")
-        # Supervisor must contain both MacShell and Waybar references
         self.assertIn("MacShell", supervisor)
-        self.assertIn("waybar", supervisor, "macshell-start must provide Waybar fallback on MacShell failure")
+        self.assertNotIn("waybar", supervisor, "macshell-start must use MacShell exclusively without legacy Waybar")
 
     def test_interaction_03_pipewire_and_hotkeys(self):
         """T3-03: PipeWire & Hotkeys: Hyprland Lua audio keybindings interface with wpctl / pipewire."""

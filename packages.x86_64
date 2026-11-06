@@ -77,12 +77,11 @@ wlr-randr
 wdisplays
 qemu-guest-agent
 
-# Wayland Cupertino Desktop Stack (Hyprland + SDDM)
+# Wayland Enterprise Desktop Stack (Hyprland + MacShell + SDDM)
 hyprland
 hyprlock
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-gtk
-waybar
 rofi
 swaybg
 dunst

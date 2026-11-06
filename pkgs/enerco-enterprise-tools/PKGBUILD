@@ -1,7 +1,7 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-enterprise-tools
 pkgver=1.0.0
-pkgrel=15
+pkgrel=17
 pkgdesc="Enterprise tooling, session initialization, MTERP launcher, and CachyOS-grade performance tuning for EnercoOS"
 arch=('any')
 url="https://org.megatama-enerco.com"
@@ -13,8 +13,6 @@ source=(
     "enerco-welcome"
     "enerco-installer"
     "enerco-apple-menu"
-    "enerco-menubar"
-    "enerco-dock-launch"
     "enerco-control-center"
     "enerco-mterp"
     "mterp.desktop"
@@ -30,7 +28,7 @@ source=(
     "00-journal-size.conf"
     "20-audio.conf"
 )
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 package() {
     # Binaries and session wrappers
@@ -39,8 +37,6 @@ package() {
     install -Dm755 "${srcdir}/enerco-welcome" "${pkgdir}/usr/local/bin/enerco-welcome"
     install -Dm755 "${srcdir}/enerco-installer" "${pkgdir}/usr/local/bin/enerco-installer"
     install -Dm755 "${srcdir}/enerco-apple-menu" "${pkgdir}/usr/local/bin/enerco-apple-menu"
-    install -Dm755 "${srcdir}/enerco-menubar" "${pkgdir}/usr/local/bin/enerco-menubar"
-    install -Dm755 "${srcdir}/enerco-dock-launch" "${pkgdir}/usr/local/bin/enerco-dock-launch"
     install -Dm755 "${srcdir}/enerco-control-center" "${pkgdir}/usr/local/bin/enerco-control-center"
     install -Dm755 "${srcdir}/enerco-mterp" "${pkgdir}/usr/local/bin/enerco-mterp"
 

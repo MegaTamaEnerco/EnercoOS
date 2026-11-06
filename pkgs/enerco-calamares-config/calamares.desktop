@@ -6,6 +6,7 @@ GenericName=Live System Installer
 Comment=Install EnercoOS Enterprise Workstation permanently to disk
 Exec=/usr/local/bin/enerco-installer
 Icon=calamares
+StartupWMClass=io.calamares.calamares
 Terminal=false
 StartupNotify=true
 Categories=System;

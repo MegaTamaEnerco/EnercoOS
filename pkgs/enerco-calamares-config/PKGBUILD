@@ -1,10 +1,10 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-calamares-config
 pkgver=1.0.0
-pkgrel=17
+pkgrel=18
 pkgdesc="Enterprise Calamares installer configuration, branding, and modules for EnercoOS"
 arch=('any')
-url="https://enerco.internal"
+url="https://org.megatama-enerco.com"
 license=('GPL3')
 depends=('calamares' 'enerco-branding' 'grub' 'efibootmgr')
 source=(

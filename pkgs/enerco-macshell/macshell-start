@@ -1,8 +1,7 @@
 #!/bin/sh
 # ==============================================================================
 # EnercoOS MacShell Session Supervisor
-# Starts and supervises the macOS Tahoe Quickshell Desktop Environment
-# Falls back cleanly to Waybar + Dunst if Quickshell/MacShell is unavailable
+# Starts and supervises the EnercoOS Liquid Glass Quickshell Desktop Environment
 # ==============================================================================
 
 export XDG_SESSION_TYPE="${XDG_SESSION_TYPE:-wayland}"
@@ -45,19 +44,11 @@ if [ ! -d "$HOME/.config/quickshell/MacLock" ] && [ -d "/etc/xdg/quickshell/MacL
     ln -sfn /etc/xdg/quickshell/MacLock "$HOME/.config/quickshell/MacLock" 2>/dev/null || true
 fi
 
-start_waybar_fallback() {
-    pgrep -u "$(id -u)" -x dunst >/dev/null 2>&1 || dunst &
-    pgrep -u "$(id -u)" -x waybar >/dev/null 2>&1 || exec waybar
-}
+# Avoid org.freedesktop.Notifications D-Bus collision with MacShell built-in notification daemon
+killall -q dunst 2>/dev/null || true
 
-# Run MacShell with Waybar + Dunst fallback on failure
-if command -v qs >/dev/null 2>&1 && [ -d "$HOME/.config/quickshell/MacShell" ]; then
-    # Avoid org.freedesktop.Notifications D-Bus collision with MacShell built-in notification daemon
-    killall -q dunst 2>/dev/null || true
-    killall -q waybar 2>/dev/null || true
-    if ! qs -c MacShell; then
-        start_waybar_fallback
-    fi
-else
-    start_waybar_fallback
-fi
+# Supervise MacShell (MacBar + MacDock + MacSpot + MacNotif)
+while [ -S "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/${WAYLAND_DISPLAY:-wayland-1}" ]; do
+    qs -c MacShell
+    sleep 1
+done

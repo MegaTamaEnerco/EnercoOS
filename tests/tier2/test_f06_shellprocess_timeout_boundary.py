@@ -61,6 +61,15 @@ class TestF06ShellprocessTimeoutBoundary(unittest.TestCase):
         self.assertGreaterEqual(timeout_val, 300, "Timeout must be >= 300s")
         self.assertLessEqual(timeout_val, 1800, "Timeout should not exceed 30 minutes (prevent infinite hang)")
 
+    def test_shellprocess_no_undefined_calamares_variables(self):
+        """T2-F06-6: Boundary: Verify shellprocess.conf has no unescaped $ shell variables that Calamares CommandList rejects."""
+        content = read_repo_file("pkgs/enerco-calamares-config/shellprocess.conf")
+        self.assertNotIn(
+            "$",
+            content,
+            "shellprocess.conf must not contain '$' variables that Calamares CommandList treats as undefined GlobalStorage variables",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

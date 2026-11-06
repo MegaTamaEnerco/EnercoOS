@@ -32,25 +32,27 @@ class TestF12MacShellSupervisor(unittest.TestCase):
         )
 
     def test_macshell_start_implements_waybar_fallback(self):
-        """T1-F12-3: Verify macshell-start falls back to waybar and dunst if Quickshell fails."""
+        """T1-F12-3: Verify macshell-start launches and supervises qs -c MacShell directly without legacy waybar."""
         content = read_repo_file("pkgs/enerco-macshell/macshell-start")
-        # Supervisor requirement: must catch MacShell failure and fall back to Waybar
         self.assertIn(
+            "qs -c MacShell",
+            content,
+            "macshell-start must launch qs -c MacShell as primary shell",
+        )
+        self.assertNotIn(
             "waybar",
             content,
-            "macshell-start must include fallback invocation of waybar if MacShell fails or crashes",
+            "macshell-start must not launch legacy waybar",
         )
 
     def test_macshell_start_notification_exclusivity(self):
-        """T1-F12-4: Verify dunst is only invoked as part of the Waybar fallback path."""
+        """T1-F12-4: Verify dunst is stopped so MacShell owns org.freedesktop.Notifications."""
         content = read_repo_file("pkgs/enerco-macshell/macshell-start")
-        # Dunst should be guarded so it doesn't conflict with MacShell's built-in notification server
-        if "dunst" in content:
-            # Should be linked to fallback or conditional branch
-            self.assertTrue(
-                "waybar" in content,
-                "dunst fallback should accompany waybar fallback",
-            )
+        self.assertIn(
+            "killall -q dunst",
+            content,
+            "macshell-start must stop dunst to prevent D-Bus notification collision with MacShell",
+        )
 
     def test_macshell_pkgbuild_installs_supervisor_binary(self):
         """T1-F12-5: Verify pkgs/enerco-macshell/PKGBUILD installs macshell-start to /usr/local/bin."""

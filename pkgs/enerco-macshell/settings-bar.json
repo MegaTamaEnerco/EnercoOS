@@ -3,5 +3,7 @@
   "launcher": "rofi -show drun",
   "files": "thunar",
   "accent": "#0071e3",
-  "darkMode": true
+  "darkMode": true,
+  "barLogoMode": "custom",
+  "barCustomLogoPath": "/usr/share/pixmaps/enerco-logo.svg"
 }

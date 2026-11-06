@@ -217,7 +217,7 @@ hl.bind(mainMod .. " + F10", hl.dsp.exec_cmd("hyprctl keyword monitor ',1366x768
 hl.bind(mainMod .. " + F9",  hl.dsp.exec_cmd("hyprctl keyword monitor ',1280x800@60,auto,1'"))
 hl.bind(mainMod .. " + F8",  hl.dsp.exec_cmd("hyprctl keyword monitor ',preferred,auto,1'"))
 
--- Layer Rules for MacShell Dark Glass Blur & Waybar Fallback
+-- Layer Rules for MacShell Liquid Glass Blur
 hl.layer_rule({
     name         = "blur-macbarbg",
     match        = { namespace = "macbarbg" },
@@ -246,19 +246,19 @@ hl.layer_rule({
     ignore_alpha = 0.05,
 })
 
-hl.layer_rule({
-    name         = "blur-waybar",
-    match        = { namespace = "waybar" },
-    blur         = true,
-    ignore_alpha = 0.2,
-})
-
 -- Enterprise Window Rules
 hl.window_rule({
     name   = "float-calamares",
     match  = { class = "calamares" },
     float  = true,
     size   = "840 520",
+    center = true,
+})
+
+hl.window_rule({
+    name   = "float-calamares-wayland",
+    match  = { class = "io.calamares.calamares" },
+    float  = true,
     center = true,
 })
 

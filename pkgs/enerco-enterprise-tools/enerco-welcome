@@ -33,7 +33,7 @@ class EnercoWelcomeWindow(Gtk.Window):
 
         # Subtitle
         sub_label = Gtk.Label()
-        sub_label.set_markup("<span font='12' color='#a0aec0'>PT Mega Tama Enerco · macOS Tahoe Enterprise Edition</span>")
+        sub_label.set_markup("<span font='12' color='#a0aec0'>PT Mega Tama Enerco · Enterprise Workstation Edition</span>")
         vbox.pack_start(sub_label, False, False, 0)
 
         vbox.pack_start(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), False, False, 4)
@@ -42,24 +42,24 @@ class EnercoWelcomeWindow(Gtk.Window):
         intro_label = Gtk.Label()
         intro_label.set_line_wrap(True)
         intro_label.set_markup(
-            "Welcome to your enterprise workstation, featuring a modern <b>macOS Tahoe</b> glass desktop, "
+            "Welcome to your PT Mega Tama Enerco enterprise workstation, featuring the modern <b>Enerco Liquid Glass</b> desktop, "
             "seamless <b>MTERP ERP</b> integration, and enterprise-grade security."
         )
         vbox.pack_start(intro_label, False, False, 0)
 
         # Shortcuts Frame
-        sc_frame = Gtk.Frame(label=" Essential macOS Shortcuts ")
+        sc_frame = Gtk.Frame(label=" Essential EnercoOS Shortcuts ")
         sc_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         sc_box.set_border_width(12)
         sc_frame.add(sc_box)
 
         shortcuts = [
-            ("<b>Super + Space</b>", "Open Spotlight Search (Apps, Files, Tools)"),
+            ("<b>Super + Space</b>", "Open Enerco Search (Apps, Files, Tools)"),
             ("<b>Super + Return</b>", "Launch Kitty Terminal"),
             ("<b>Super + W / Q</b>", "Close Active Window / Quit App"),
-            ("<b>Super + E</b>", "Open Finder File Manager"),
-            ("<b>Super + Tab</b>", "macOS Application Switcher"),
-            ("<b>Super + L</b>", "Lock Screen (hyprlock Frosted Glass)"),
+            ("<b>Super + E</b>", "Open File Manager"),
+            ("<b>Super + Tab</b>", "Workstation Application Switcher"),
+            ("<b>Super + L</b>", "Lock Screen (Frosted Glass)"),
             ("<b>Super + F11</b>", "Toggle 1920x1080 Full HD Display Mode"),
         ]
 

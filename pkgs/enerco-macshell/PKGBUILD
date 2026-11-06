@@ -1,10 +1,10 @@
 # Maintainer: PT Mega Tama Enerco <devops@megatama-enerco.com>
 pkgname=enerco-macshell
 pkgver=1.0.0
-pkgrel=2
-pkgdesc="macOS Tahoe Liquid Glass Desktop Shell for EnercoOS (MacShell + MacLock)"
+pkgrel=4
+pkgdesc="EnercoOS Liquid Glass Desktop Shell (MacShell + MacLock)"
 arch=('any')
-url="https://github.com/0-ss/MacShell"
+url="https://org.megatama-enerco.com"
 license=('GPL3')
 options=('!strip' '!debug')
 depends=(
@@ -21,6 +21,8 @@ depends=(
 )
 makedepends=(
     'git'
+    'librsvg'
+    'python'
 )
 source=(
     "macshell::git+https://github.com/0-ss/MacShell.git#commit=51db0bab6997da310d2aacfaa7084740ec44ad4a"
@@ -29,8 +31,12 @@ source=(
     "pinned.json"
     "settings-dock.json"
     "settings-bar.json"
+    "enerco-logo.svg"
+    "brand-enerco.py"
 )
 sha256sums=(
+    'SKIP'
+    'SKIP'
     'SKIP'
     'SKIP'
     'SKIP'
@@ -49,6 +55,11 @@ package() {
     install -dm755 "${pkgdir}/etc/skel/.config/quickshell"
     cp -dr --no-preserve=ownership "${srcdir}/macshell/MacShell" "${pkgdir}/etc/skel/.config/quickshell/"
     cp -dr --no-preserve=ownership "${srcdir}/macshell/MacLock" "${pkgdir}/etc/skel/.config/quickshell/"
+
+    # Apply PT Mega Tama Enerco branding and remove third-party logos/trademarks
+    python3 "${srcdir}/brand-enerco.py" "${srcdir}/enerco-logo.svg" \
+        "${pkgdir}/etc/xdg/quickshell/MacShell" \
+        "${pkgdir}/etc/skel/.config/quickshell/MacShell"
 
     # Pre-configured dock and bar settings
     install -Dm644 "${srcdir}/pinned.json" "${pkgdir}/etc/skel/.config/macdock/pinned.json"

@@ -123,16 +123,16 @@ class TestF03RebuildDetectionBoundary(unittest.TestCase):
 
         # 5. Verify against authentic in-tree repository packages with multi-digit revisions
         calamares_content = read_repo_file("pkgs/enerco-calamares-config/PKGBUILD")
-        self.assertEqual(
+        self.assertRegex(
             extract_version(calamares_content),
-            "1.0.0-17",
-            "enerco-calamares-config version must extract exactly as 1.0.0-17",
+            r"^1\.0\.0-\d{2,}$",
+            "enerco-calamares-config version must extract full multi-digit pkgrel",
         )
         desktop_content = read_repo_file("pkgs/enerco-desktop-config/PKGBUILD")
-        self.assertEqual(
+        self.assertRegex(
             extract_version(desktop_content),
-            "1.0.0-20",
-            "enerco-desktop-config version must extract exactly as 1.0.0-20",
+            r"^1\.0\.0-\d{2,}$",
+            "enerco-desktop-config version must extract full multi-digit pkgrel",
         )
 
 

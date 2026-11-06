@@ -57,15 +57,8 @@ class TestF14DisplayPower(unittest.TestCase):
 
     def test_system_settings_decoupled_from_calamares_installer(self):
         """T1-F14-5: Verify System Settings action does not launch enerco-installer."""
-        # In enerco-menubar and enerco-apple-menu
-        menubar_content = read_repo_file("pkgs/enerco-enterprise-tools/enerco-menubar")
         apple_menu_content = read_repo_file("pkgs/enerco-enterprise-tools/enerco-apple-menu")
         # System Settings must NOT invoke enerco-installer
-        self.assertNotIn(
-            '*"System Settings"*) xfce4-settings-manager 2>/dev/null || /usr/local/bin/enerco-installer',
-            menubar_content,
-            "System Settings in enerco-menubar must launch real settings (e.g. wdisplays/control center), not installer",
-        )
         self.assertNotIn(
             '*"System Settings"*) /usr/local/bin/enerco-installer',
             apple_menu_content,

@@ -60,7 +60,7 @@ elif [[ -f "${HOME}/.config/hypr/hyprland.conf" ]]; then
     CONFIG_ARG=(--config "${HOME}/.config/hypr/hyprland.conf")
 fi
 
-# Fail-safe background launcher: ensures wallpaper, waybar, and dunst start reliably
+# Fail-safe background launcher: ensures wallpaper, MacShell, and welcome assistant start reliably
 (
     for i in {1..60}; do
         if [[ -S "${XDG_RUNTIME_DIR}/wayland-1" ]]; then
@@ -77,8 +77,7 @@ fi
     if [[ -n "${WAYLAND_DISPLAY:-}" ]]; then
         sleep 0.5
         pgrep -x swaybg >/dev/null || swaybg -i /usr/share/backgrounds/enerco-mac.png -m fill &
-        pgrep -x waybar >/dev/null || waybar &
-        pgrep -x dunst  >/dev/null || dunst &
+        pgrep -f "(^|/)(qs|quickshell).*MacShell" >/dev/null || /usr/local/bin/macshell-start &
         pgrep -f enerco-welcome >/dev/null || /usr/local/bin/enerco-welcome &
     fi
 ) &
