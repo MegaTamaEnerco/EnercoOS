@@ -4,8 +4,8 @@ pkgver=1.0.0
 pkgrel=6
 pkgdesc="Visual identity, wallpapers, and logos for EnercoOS"
 arch=('any')
-url="https://enerco.internal"
-license=('Proprietary')
+url="https://org.megatama-enerco.com"
+license=('GPL3')
 source=(
     "enerco-mac.png"
     "enerco-mac.svg"

@@ -5,7 +5,7 @@ pkgrel=15
 pkgdesc="Enterprise tooling, session initialization, MTERP launcher, and CachyOS-grade performance tuning for EnercoOS"
 arch=('any')
 url="https://org.megatama-enerco.com"
-license=('Proprietary')
+license=('GPL3')
 depends=('bash' 'chromium' 'ufw' 'wireguard-tools' 'openvpn' 'python' 'python-gobject' 'gtk3' 'rofi' 'zram-generator')
 source=(
     "enerco-session"
