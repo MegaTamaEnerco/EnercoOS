@@ -20,6 +20,7 @@ file_permissions=(
   ["/etc/profile.d/enerco-autostart.sh"]="0:0:755"
   ["/etc/zprofile"]="0:0:644"
   ["/usr/local/bin/enerco-live-init"]="0:0:755"
+  ["/usr/local/bin/enerco-mterp"]="0:0:755"
   ["/usr/local/bin/nautilus"]="0:0:755"
   ["/home/enerco"]="1000:1000:755"
 )
