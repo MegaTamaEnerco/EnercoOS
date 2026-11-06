@@ -15,15 +15,28 @@
 /localrepo/*.files*
 !/localrepo/.gitkeep
 
-# Package build artifacts in pkgs/
-pkgs/*/*/
+# Package archives and build artifacts
+*.pkg.tar.*
+*.pkg.tar.zst
 pkgs/*/src/
 pkgs/*/pkg/
+pkgs/*/*.pkg.tar.*
 pkgs/*/*.tar.*
 pkgs/*/*.zip
 pkgs/*/*.log
-!pkgs/*/PKGBUILD
-!pkgs/*/*.*
+pkgs/*/*.sig
+
+# Cloned source repositories during local makepkg builds
+pkgs/macos-like-icon-theme/macos-like/
+pkgs/enerco-macshell/macshell/
+
+# Agent and AI metadata
+.agents/
+
+# Python test artifacts
+__pycache__/
+*.pyc
+/tests/results/
 
 # Editor and OS noise
 .vscode/
@@ -33,5 +46,3 @@ Desktop.ini
 .DS_Store
 *~
 *.swp
-
-*.pkg.tar.zst

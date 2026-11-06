@@ -10,8 +10,37 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORK_DIR="/tmp/enerco-build-work"
 OUT_DIR="${SCRIPT_DIR}/dist"
 LOCALREPO_DIR="${SCRIPT_DIR}/localrepo"
+PKGS_DIR="${SCRIPT_DIR}/pkgs"
 PACMAN_CONF_TEMPLATE="${SCRIPT_DIR}/pacman.conf"
 BUILD_PACMAN_CONF="${WORK_DIR}/pacman-build.conf"
+
+# Trap handler for signal cleanup
+cleanup_work_dir() {
+    local exit_code=$?
+    if [[ -d "${WORK_DIR:-}" ]]; then
+        mount | grep "${WORK_DIR}" | awk '{print $3}' | sort -r | xargs -r umount -l 2>/dev/null || true
+    fi
+    exit ${exit_code}
+}
+trap cleanup_work_dir INT TERM EXIT
+
+# Parse CLI options (support -h/--help without requiring root privileges)
+REBUILD_PKGS=false
+for arg in "$@"; do
+    case "${arg}" in
+        --rebuild-pkgs)
+            REBUILD_PKGS=true
+            ;;
+        -h|--help)
+            echo "Usage: sudo $0 [OPTIONS]"
+            echo ""
+            echo "Options:"
+            echo "  --rebuild-pkgs    Force recompilation of all in-tree packages before ISO build"
+            echo "  -h, --help        Show this help message"
+            exit 0
+            ;;
+    esac
+done
 
 echo "=========================================================="
 echo "          PT MEGA TAMA ENERCO - ENERCOOS BUILDER          "
@@ -23,23 +52,47 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-# Step 1: Verify and build local packages if needed
-if [[ ! -f "${LOCALREPO_DIR}/enerco-local.db.tar.gz" ]] || [[ "${1:-}" == "--rebuild-pkgs" ]]; then
-    echo "[STEP 1/4] Building in-tree standard Arch packages..."
-    # Drop sudo privilege temporarily if needed or run directly
-    if [[ -n "${SUDO_USER:-}" ]]; then
-        sudo -u "${SUDO_USER}" bash "${SCRIPT_DIR}/scripts/build-packages.sh"
+# Step 1: Verify and build local packages as non-root user
+BUILDER_USER="${SUDO_USER:-builder}"
+if [[ -z "${SUDO_USER:-}" ]] || [[ "${BUILDER_USER}" == "root" ]]; then
+    DIR_OWNER="$(stat -c '%U' "${SCRIPT_DIR}")"
+    if [[ "${DIR_OWNER}" != "root" ]] && id "${DIR_OWNER}" &>/dev/null; then
+        BUILDER_USER="${DIR_OWNER}"
+    elif id "builder" &>/dev/null; then
+        BUILDER_USER="builder"
     else
-        bash "${SCRIPT_DIR}/scripts/build-packages.sh"
+        FIRST_USER="$(awk -F: '$3 >= 1000 && $3 < 60000 {print $1; exit}' /etc/passwd)"
+        if [[ -n "${FIRST_USER}" ]]; then
+            BUILDER_USER="${FIRST_USER}"
+        else
+            echo "[ERROR] Cannot find a non-root user to build packages (makepkg cannot run as root)."
+            exit 1
+        fi
     fi
+fi
+
+echo "[STEP 1/4] Checking and building in-tree standard Arch packages (user: ${BUILDER_USER})..."
+mkdir -p "${LOCALREPO_DIR}"
+chown -R "${BUILDER_USER}:${BUILDER_USER}" "${LOCALREPO_DIR}" "${PKGS_DIR}"
+
+BUILD_PKG_ARGS=()
+if [[ "${REBUILD_PKGS}" == true ]]; then
+    BUILD_PKG_ARGS+=("--rebuild")
+fi
+
+if command -v sudo &>/dev/null; then
+    sudo -u "${BUILDER_USER}" -H bash "${SCRIPT_DIR}/scripts/build-packages.sh" "${BUILD_PKG_ARGS[@]}"
+elif command -v runuser &>/dev/null; then
+    runuser -u "${BUILDER_USER}" -- bash "${SCRIPT_DIR}/scripts/build-packages.sh" "${BUILD_PKG_ARGS[@]}"
 else
-    echo "[STEP 1/4] In-tree package repository found at ${LOCALREPO_DIR}."
+    su -s /bin/bash "${BUILDER_USER}" -c "$(printf '%q ' bash "${SCRIPT_DIR}/scripts/build-packages.sh" "${BUILD_PKG_ARGS[@]}")"
 fi
 
 # Step 2: Clean previous build workspace
 echo "[STEP 2/4] Initializing clean workspace at ${WORK_DIR}..."
 rm -rf "${WORK_DIR}"
-mkdir -p "${WORK_DIR}" "${OUT_DIR}"
+mkdir -p "${WORK_DIR}"
+mkdir -p "${OUT_DIR}"
 
 # Step 3: Configure pacman.conf with absolute local repository path
 echo "[STEP 3/4] Preparing pacman build configuration..."
@@ -77,4 +130,3 @@ echo " [SUCCESS] EnercoOS ISO build completed successfully!"
 echo " Generated images:"
 ls -lh "${OUT_DIR}"/*.iso
 echo "=========================================================="
-

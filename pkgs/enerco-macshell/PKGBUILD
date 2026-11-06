@@ -19,25 +19,36 @@ depends=(
     'librsvg'
     'macos-like-icon-theme'
 )
+makedepends=(
+    'git'
+)
 source=(
+    "macshell::git+https://github.com/0-ss/MacShell.git#commit=51db0bab6997da310d2aacfaa7084740ec44ad4a"
     "macshell-start"
     "maclock"
     "pinned.json"
     "settings-dock.json"
     "settings-bar.json"
 )
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=(
+    'SKIP'
+    'SKIP'
+    'SKIP'
+    'SKIP'
+    'SKIP'
+    'SKIP'
+)
 
 package() {
     # System-wide Quickshell configs
     install -dm755 "${pkgdir}/etc/xdg/quickshell"
-    cp -dr --no-preserve=ownership "${srcdir}/../MacShell" "${pkgdir}/etc/xdg/quickshell/"
-    cp -dr --no-preserve=ownership "${srcdir}/../MacLock" "${pkgdir}/etc/xdg/quickshell/"
+    cp -dr --no-preserve=ownership "${srcdir}/macshell/MacShell" "${pkgdir}/etc/xdg/quickshell/"
+    cp -dr --no-preserve=ownership "${srcdir}/macshell/MacLock" "${pkgdir}/etc/xdg/quickshell/"
 
     # Install user skel default links/configs
     install -dm755 "${pkgdir}/etc/skel/.config/quickshell"
-    cp -dr --no-preserve=ownership "${srcdir}/../MacShell" "${pkgdir}/etc/skel/.config/quickshell/"
-    cp -dr --no-preserve=ownership "${srcdir}/../MacLock" "${pkgdir}/etc/skel/.config/quickshell/"
+    cp -dr --no-preserve=ownership "${srcdir}/macshell/MacShell" "${pkgdir}/etc/skel/.config/quickshell/"
+    cp -dr --no-preserve=ownership "${srcdir}/macshell/MacLock" "${pkgdir}/etc/skel/.config/quickshell/"
 
     # Pre-configured dock and bar settings
     install -Dm644 "${srcdir}/pinned.json" "${pkgdir}/etc/skel/.config/macdock/pinned.json"
@@ -46,11 +57,11 @@ package() {
 
     # Fonts
     install -dm755 "${pkgdir}/usr/share/fonts/OTF"
-    if [ -d "${srcdir}/../MacShell/assets/fonts" ]; then
-        install -Dm644 "${srcdir}/../MacShell/assets/fonts"/*.otf "${pkgdir}/usr/share/fonts/OTF/" 2>/dev/null || true
+    if [ -d "${srcdir}/macshell/MacShell/assets/fonts" ]; then
+        install -Dm644 "${srcdir}/macshell/MacShell/assets/fonts"/*.otf "${pkgdir}/usr/share/fonts/OTF/" 2>/dev/null || true
     fi
 
     # Supervisor & Lock Scripts
-    install -Dm755 "${srcdir}/macshell-start" "${pkgdir}/usr/local/bin/macshell-start"
-    install -Dm755 "${srcdir}/maclock" "${pkgdir}/usr/local/bin/maclock"
+    install -D -m 755 "${srcdir}/macshell-start" "${pkgdir}/usr/local/bin/macshell-start"
+    install -D -m 755 "${srcdir}/maclock" "${pkgdir}/usr/local/bin/maclock"
 }
