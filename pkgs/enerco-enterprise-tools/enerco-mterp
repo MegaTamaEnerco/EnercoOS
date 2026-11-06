@@ -17,3 +17,4 @@ exec chromium \
     --ignore-gpu-blocklist \
     --user-data-dir="${PROFILE_DIR}" \
     "$@"
+

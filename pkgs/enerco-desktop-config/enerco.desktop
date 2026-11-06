@@ -4,3 +4,4 @@ Comment=EnercoOS Enterprise Cupertino Wayland Workstation
 Exec=/usr/local/bin/enerco-session
 Type=Application
 DesktopNames=Hyprland
+
