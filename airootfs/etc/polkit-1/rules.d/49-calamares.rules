@@ -1,0 +1,9 @@
+/* EnercoOS Live Session Calamares Polkit Rule */
+polkit.addRule(function(action, subject) {
+    if ((action.id == "com.github.calamares.calamares.pkexec.run" ||
+         action.id == "org.archlinux.pkexec.calamares" ||
+         action.id == "com.github.calamares.calamares") &&
+        (subject.isInGroup("wheel") || subject.user == "enerco")) {
+        return polkit.Result.YES;
+    }
+});

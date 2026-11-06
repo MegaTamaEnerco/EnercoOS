@@ -1,7 +1,7 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-calamares-config
 pkgver=1.0.0
-pkgrel=13
+pkgrel=15
 pkgdesc="Enterprise Calamares installer configuration, branding, and modules for EnercoOS"
 arch=('any')
 url="https://enerco.internal"
@@ -61,6 +61,6 @@ package() {
     install -Dm644 "${srcdir}/branding.desc" "${pkgdir}/etc/calamares/branding/enerco/branding.desc"
     install -Dm644 "${srcdir}/stylesheet.qss" "${pkgdir}/etc/calamares/branding/enerco/stylesheet.qss"
 
-    # Desktop Launcher on User Desktop
-    install -Dm755 "${srcdir}/calamares.desktop" "${pkgdir}/etc/skel/Desktop/calamares.desktop"
+    # System Application Launcher
+    install -Dm755 "${srcdir}/calamares.desktop" "${pkgdir}/usr/share/applications/calamares.desktop"
 }

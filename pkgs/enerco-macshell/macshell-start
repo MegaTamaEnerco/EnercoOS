@@ -2,6 +2,7 @@
 # ==============================================================================
 # EnercoOS MacShell Session Supervisor
 # Starts and supervises the macOS Tahoe Quickshell Desktop Environment
+# Falls back cleanly to Waybar + Dunst if Quickshell/MacShell is unavailable
 # ==============================================================================
 
 export XDG_SESSION_TYPE="${XDG_SESSION_TYPE:-wayland}"
@@ -32,6 +33,9 @@ fi
 if [ ! -f "$HOME/.config/macdock/settings.json" ] && [ -f "/etc/skel/.config/macdock/settings.json" ]; then
     cp -n /etc/skel/.config/macdock/settings.json "$HOME/.config/macdock/settings.json" 2>/dev/null || true
 fi
+if [ ! -f "$HOME/.config/macbar/settings.json" ] && [ -f "/etc/skel/.config/macbar/settings.json" ]; then
+    cp -n /etc/skel/.config/macbar/settings.json "$HOME/.config/macbar/settings.json" 2>/dev/null || true
+fi
 
 # Ensure quickshell config symlink or path exists in user dir if needed
 if [ ! -d "$HOME/.config/quickshell/MacShell" ] && [ -d "/etc/xdg/quickshell/MacShell" ]; then
@@ -41,5 +45,19 @@ if [ ! -d "$HOME/.config/quickshell/MacLock" ] && [ -d "/etc/xdg/quickshell/MacL
     ln -sfn /etc/xdg/quickshell/MacLock "$HOME/.config/quickshell/MacLock" 2>/dev/null || true
 fi
 
-# Run MacShell
-exec qs -c MacShell
+start_waybar_fallback() {
+    pgrep -u "$(id -u)" -x dunst >/dev/null 2>&1 || dunst &
+    pgrep -u "$(id -u)" -x waybar >/dev/null 2>&1 || exec waybar
+}
+
+# Run MacShell with Waybar + Dunst fallback on failure
+if command -v qs >/dev/null 2>&1 && [ -d "$HOME/.config/quickshell/MacShell" ]; then
+    # Avoid org.freedesktop.Notifications D-Bus collision with MacShell built-in notification daemon
+    killall -q dunst 2>/dev/null || true
+    killall -q waybar 2>/dev/null || true
+    if ! qs -c MacShell; then
+        start_waybar_fallback
+    fi
+else
+    start_waybar_fallback
+fi

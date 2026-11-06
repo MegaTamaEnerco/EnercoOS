@@ -1,7 +1,7 @@
 # Maintainer: PT Mega Tama Enerco <devops@megatama-enerco.com>
 pkgname=enerco-macshell
 pkgver=1.0.0
-pkgrel=1
+pkgrel=2
 pkgdesc="macOS Tahoe Liquid Glass Desktop Shell for EnercoOS (MacShell + MacLock)"
 arch=('any')
 url="https://github.com/0-ss/MacShell"

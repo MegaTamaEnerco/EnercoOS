@@ -21,10 +21,10 @@ case "${MENU}" in
         CHOICE=$(printf "About This Workstation\n────────────────────────\nSystem Settings...\nActivity Monitor\nTerminal\n────────────────────────\nLock Screen             ⌘L\nLog Out Enerco...     ⇧⌘Q\nRestart...\nShut Down..." | rofi -dmenu -theme-str "window { location: northwest; anchor: northwest; x-offset: ${OFFSET}px; y-offset: 32px; width: ${WIDTH}px; border-radius: 10px; } listview { lines: ${LINES}; }" -theme "${THEME}" -p "" || true)
         case "${CHOICE}" in
             *"About This Workstation"*) /usr/local/bin/enerco-welcome & ;;
-            *"System Settings"*) xfce4-settings-manager 2>/dev/null || /usr/local/bin/enerco-installer & ;;
+            *"System Settings"*) qs -c MacShell ipc call settings toggle 2>/dev/null || wdisplays 2>/dev/null || /usr/local/bin/enerco-control-center & ;;
             *"Activity Monitor"*) kitty -e htop & ;;
             *"Terminal"*) kitty & ;;
-            *"Lock Screen"*) hyprlock & ;;
+            *"Lock Screen"*) /usr/local/bin/maclock & ;;
             *"Log Out"*) hyprctl dispatch exit ;;
             *"Restart"*) systemctl reboot ;;
             *"Shut Down"*) systemctl poweroff ;;
@@ -84,7 +84,7 @@ case "${MENU}" in
             *"Full Screen"*) hyprctl dispatch fullscreen 1 ;;
             *"Floating"*) hyprctl dispatch togglefloating ;;
             *"Layout Split"*) hyprctl dispatch togglesplit ;;
-            *"Reload"*) killall waybar 2>/dev/null; waybar & ;;
+            *"Reload"*) /usr/local/bin/macshell-start & ;;
         esac
         ;;
 
@@ -110,10 +110,9 @@ case "${MENU}" in
         CHOICE=$(printf "EnercoOS Workstation Help\nMTERP ERP Documentation\n────────────────────────\nmacOS Keyboard Shortcuts\nAbout This Workstation" | rofi -dmenu -theme-str "window { location: northwest; anchor: northwest; x-offset: ${OFFSET}px; y-offset: 32px; width: ${WIDTH}px; border-radius: 10px; } listview { lines: ${LINES}; }" -theme "${THEME}" -p "Help" || true)
         case "${CHOICE}" in
             *"Help"*) chromium --app=https://org.megatama-enerco.com & ;;
-            *"MTERP"*) chromium --app=https://mterp.megatama-enerco.com & ;;
+            *"MTERP"*) /usr/local/bin/enerco-mterp & ;;
             *"Shortcuts"*) /usr/local/bin/enerco-welcome & ;;
             *"About"*) /usr/local/bin/enerco-welcome & ;;
         esac
         ;;
 esac
-

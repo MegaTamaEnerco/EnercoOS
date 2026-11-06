@@ -16,13 +16,13 @@ case "${CHOICE}" in
         /usr/local/bin/enerco-welcome &
         ;;
     *"System Settings"*)
-        /usr/local/bin/enerco-installer &
+        qs -c MacShell ipc call settings toggle 2>/dev/null || wdisplays 2>/dev/null || /usr/local/bin/enerco-control-center &
         ;;
     *"Activity Monitor"*)
         kitty -e htop &
         ;;
     *"Lock Screen"*)
-        hyprlock &
+        /usr/local/bin/maclock &
         ;;
     *"Log Out"*)
         hyprctl dispatch exit
@@ -34,4 +34,3 @@ case "${CHOICE}" in
         systemctl poweroff
         ;;
 esac
-

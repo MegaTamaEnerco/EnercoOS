@@ -12,9 +12,12 @@ VIRT_TYPE=$(systemd-detect-virt 2>/dev/null || echo "none")
 
 # Detect Graphics Hardware
 GPU_INFO=$(lspci 2>/dev/null | grep -E "VGA|3D|Display" || echo "")
+DMI_PRODUCT=$(cat /sys/class/dmi/id/product_name 2>/dev/null || echo "")
+DMI_VENDOR=$(cat /sys/class/dmi/id/sys_vendor 2>/dev/null || echo "")
 
 echo "[enerco-session] Detected virtualization: ${VIRT_TYPE}"
 echo "[enerco-session] Detected GPU hardware: ${GPU_INFO}"
+echo "[enerco-session] Detected DMI product: ${DMI_PRODUCT} (${DMI_VENDOR})"
 
 # General Wayland Environment Defaults
 export XDG_CURRENT_DESKTOP=Hyprland
@@ -26,7 +29,7 @@ export SDL_VIDEODRIVER=wayland
 export CLUTTER_BACKEND=wayland
 
 # Virtual Machine optimizations (VirtualBox VMSVGA / VMware SVGA / QEMU VirtIO)
-if [[ "${VIRT_TYPE}" =~ (oracle|vmware|microsoft|qemu|kvm) ]] || echo "${GPU_INFO}" | grep -iqE "vmware|virtualbox|qemu"; then
+if [[ "${VIRT_TYPE}" =~ (oracle|vmware|microsoft|qemu|kvm) ]] || echo "${GPU_INFO}" | grep -iqE "vmware|virtualbox|qemu" || echo "${DMI_PRODUCT} ${DMI_VENDOR}" | grep -iqE "virtualbox|vmware|qemu|innotek"; then
     echo "[enerco-session] Applying virtual machine compatibility flags..."
     export WLR_NO_HARDWARE_CURSORS=1
     export WLR_RENDERER_ALLOW_SOFTWARE=1

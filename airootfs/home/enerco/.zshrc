@@ -10,12 +10,11 @@ PROMPT='%F{cyan}⚡ enerco%f:%F{blue}%~%f$ '
 alias ls='ls --color=auto'
 alias ll='ls -la'
 alias grep='grep --color=auto'
-alias mterp='chromium --app=https://mterp.internal --ozone-platform=wayland'
-alias install-os='calamares'
+alias mterp='chromium --app=https://mterp.megatama-enerco.com --ozone-platform=wayland'
+alias install-os='/usr/local/bin/enerco-installer'
 alias lockdown='sudo /usr/local/bin/enerco-lockdown'
 
 # Welcome message
 if [[ -o interactive ]]; then
     fastfetch 2>/dev/null || cat /etc/issue
 fi
-

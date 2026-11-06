@@ -5,12 +5,14 @@
 # Core Base System & Kernel
 base
 base-devel
+util-linux
 linux
 linux-headers
 linux-zen
 linux-zen-headers
 zram-generator
 irqbalance
+power-profiles-daemon
 linux-firmware
 amd-ucode
 intel-ucode
@@ -35,17 +37,21 @@ man-db
 man-pages
 texinfo
 
-# Networking, VPN & Enterprise Security
+# Networking, Bluetooth, VPN & Enterprise Security
 networkmanager
 network-manager-applet
 wireless_tools
 wpa_supplicant
+bluez
+bluez-utils
+blueman
 systemd-resolvconf
 wireguard-tools
 openvpn
 ufw
 openssh
 ca-certificates
+archlinux-keyring
 curl
 wget
 rsync
@@ -68,6 +74,7 @@ vulkan-radeon
 nvidia-utils
 virtualbox-guest-utils
 wlr-randr
+wdisplays
 qemu-guest-agent
 
 # Wayland Cupertino Desktop Stack (Hyprland + SDDM)
@@ -89,6 +96,7 @@ grim
 slurp
 polkit-gnome
 sddm
+weston
 qt5-wayland
 qt6-wayland
 kvantum
@@ -104,8 +112,12 @@ otf-font-awesome
 papirus-icon-theme
 capitaine-cursors
 
-# Enterprise ERP Runtime & Admin Tools
+# Enterprise ERP Runtime, Office Productivity & Admin Tools
 chromium
+libreoffice-fresh
+evince
+loupe
+mousepad
 htop
 fastfetch
 parted
@@ -138,4 +150,3 @@ enerco-macshell
 enerco-desktop-config
 enerco-enterprise-tools
 enerco-calamares-config
-

@@ -1,10 +1,10 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-enterprise-tools
 pkgver=1.0.0
-pkgrel=12
+pkgrel=14
 pkgdesc="Enterprise tooling, session initialization, MTERP launcher, and CachyOS-grade performance tuning for EnercoOS"
 arch=('any')
-url="https://enerco.internal"
+url="https://org.megatama-enerco.com"
 license=('Proprietary')
 depends=('bash' 'chromium' 'ufw' 'wireguard-tools' 'openvpn' 'python' 'python-gobject' 'gtk3' 'rofi' 'zram-generator')
 source=(
@@ -16,6 +16,7 @@ source=(
     "enerco-menubar"
     "enerco-dock-launch"
     "enerco-control-center"
+    "enerco-mterp"
     "mterp.desktop"
     "sysctl-enerco-security.conf"
     "sysctl-cachyos-performance.conf"
@@ -29,7 +30,7 @@ source=(
     "00-journal-size.conf"
     "20-audio.conf"
 )
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 package() {
     # Binaries and session wrappers
@@ -41,6 +42,7 @@ package() {
     install -Dm755 "${srcdir}/enerco-menubar" "${pkgdir}/usr/local/bin/enerco-menubar"
     install -Dm755 "${srcdir}/enerco-dock-launch" "${pkgdir}/usr/local/bin/enerco-dock-launch"
     install -Dm755 "${srcdir}/enerco-control-center" "${pkgdir}/usr/local/bin/enerco-control-center"
+    install -Dm755 "${srcdir}/enerco-mterp" "${pkgdir}/usr/local/bin/enerco-mterp"
 
     # Enterprise application launcher
     install -Dm644 "${srcdir}/mterp.desktop" "${pkgdir}/usr/share/applications/mterp.desktop"

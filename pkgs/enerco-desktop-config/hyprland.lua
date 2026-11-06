@@ -26,14 +26,15 @@ hl.monitor({
 -- Default applications
 local terminal    = "kitty"
 local fileManager = "thunar"
-local menu        = "rofi -show drun"
+local menu        = "qs -c MacShell ipc call spotlight toggle || rofi -show drun"
 
 -- Enterprise Autostart Services
 hl.on("hyprland.start", function ()
     hl.exec_cmd("pgrep -f polkit-gnome >/dev/null || /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &")
     hl.exec_cmd("pgrep -x swaybg >/dev/null || swaybg -i /usr/share/backgrounds/enerco-mac.png -m fill &")
-    hl.exec_cmd("pgrep -x waybar >/dev/null || waybar &")
-    hl.exec_cmd("pgrep -x dunst >/dev/null || dunst &")
+    hl.exec_cmd("/usr/local/bin/macshell-start &")
+    hl.exec_cmd("pgrep -x hypridle >/dev/null || hypridle &")
+    hl.exec_cmd("pgrep -f blueman-applet >/dev/null || blueman-applet &")
     hl.exec_cmd("pgrep -f enerco-welcome >/dev/null || /usr/local/bin/enerco-welcome &")
     -- VirtualBox Guest Services (Auto-resize display, clipboard, seamless mouse)
     hl.exec_cmd("pgrep -f VBoxClient >/dev/null || VBoxClient-all &")
@@ -58,10 +59,6 @@ hl.env("XDG_SESSION_DESKTOP", "Hyprland")
 hl.env("GDK_BACKEND", "wayland,x11,*")
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
 hl.env("QS_ICON_THEME", "MacOS-Like-Dark")
-hl.env("WLR_NO_HARDWARE_CURSORS", "1")
-hl.env("WLR_RENDERER_ALLOW_SOFTWARE", "1")
-hl.env("LIBGL_ALWAYS_SOFTWARE", "1")
-hl.env("AQ_NO_MODIFIERS", "1")
 
 -- Look and Feel (macOS Tahoe Aesthetics)
 hl.config({
@@ -79,7 +76,7 @@ hl.config({
     },
 
     decoration = {
-        rounding       = 14,
+        rounding = 14,
         rounding_power = 2,
         active_opacity   = 0.98,
         inactive_opacity = 0.92,
@@ -139,8 +136,8 @@ hl.config({
         follow_mouse = 1,
         sensitivity  = 0,
         touchpad = {
-            natural_scroll          = true,
-            tap_to_click            = true,
+            natural_scroll = true,
+            tap_to_click = true,
             clickfinger_behavior    = true,
             tap_and_drag            = true,
             drag_lock               = false,
@@ -170,21 +167,32 @@ hl.gesture({
 -- Keybindings
 local mainMod = "SUPER"
 
--- macOS Native Keybindings
+-- macOS Native Keybindings & MacShell Controls
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + space",  hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + PERIOD", hl.dsp.exec_cmd("qs -c MacShell ipc call spotlight emoji"))
+hl.bind(mainMod .. " + Z",      hl.dsp.exec_cmd("qs -c MacShell ipc call settings toggle"))
 hl.bind(mainMod .. " + W",      hl.dsp.window.close())
 hl.bind(mainMod .. " + Q",      hl.dsp.window.close())
 hl.bind(mainMod .. " + E",      hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + Tab",    hl.dsp.exec_cmd("rofi -show window"))
 hl.bind(mainMod .. " + D",      hl.dsp.exec_cmd("hyprctl dispatch togglespecialworkspace"))
-hl.bind(mainMod .. " + L",      hl.dsp.exec_cmd("hyprlock"))
-hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd("chromium --app=https://mterp.megatama-enerco.com --ozone-platform=wayland --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization,UseOzonePlatform --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist"))
+hl.bind(mainMod .. " + L",      hl.dsp.exec_cmd("/usr/local/bin/maclock"))
+hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd("/usr/local/bin/enerco-mterp"))
 hl.bind(mainMod .. " + I",      hl.dsp.exec_cmd("/usr/local/bin/enerco-installer"))
 hl.bind(mainMod .. " + M",      hl.dsp.exit())
 hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + J",      hl.dsp.layout("togglesplit"))
-hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("killall waybar 2>/dev/null; waybar &"))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
+hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("/usr/local/bin/macshell-start &"))
+
+-- Hardware Audio & Brightness Media Keys (PipeWire / WirePlumber / brightnessctl)
+hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"))
+hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
+hl.bind("XF86AudioMute",         hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"))
+hl.bind("XF86AudioMicMute",      hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"))
+hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl set +5%"))
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"))
 
 -- Navigation (Focus)
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
@@ -209,7 +217,35 @@ hl.bind(mainMod .. " + F10", hl.dsp.exec_cmd("hyprctl keyword monitor ',1366x768
 hl.bind(mainMod .. " + F9",  hl.dsp.exec_cmd("hyprctl keyword monitor ',1280x800@60,auto,1'"))
 hl.bind(mainMod .. " + F8",  hl.dsp.exec_cmd("hyprctl keyword monitor ',preferred,auto,1'"))
 
--- Layer Rules for Frosted Glass Blur
+-- Layer Rules for MacShell Dark Glass Blur & Waybar Fallback
+hl.layer_rule({
+    name         = "blur-macbarbg",
+    match        = { namespace = "macbarbg" },
+    blur         = true,
+    ignore_alpha = 0.05,
+})
+
+hl.layer_rule({
+    name         = "blur-macdock",
+    match        = { namespace = "macdock" },
+    blur         = true,
+    ignore_alpha = 0.2,
+})
+
+hl.layer_rule({
+    name         = "blur-macspot",
+    match        = { namespace = "macspot" },
+    blur         = true,
+    ignore_alpha = 0.05,
+})
+
+hl.layer_rule({
+    name         = "blur-maclock",
+    match        = { namespace = "quickshell:MacLock" },
+    blur         = true,
+    ignore_alpha = 0.05,
+})
+
 hl.layer_rule({
     name         = "blur-waybar",
     match        = { namespace = "waybar" },
@@ -231,6 +267,22 @@ hl.window_rule({
     match  = { class = "org.pulseaudio.pavucontrol" },
     float  = true,
     size   = "640 440",
+    center = true,
+})
+
+hl.window_rule({
+    name   = "float-blueman",
+    match  = { class = "blueman-manager" },
+    float  = true,
+    size   = "640 440",
+    center = true,
+})
+
+hl.window_rule({
+    name   = "float-wdisplays",
+    match  = { class = "wdisplays" },
+    float  = true,
+    size   = "720 480",
     center = true,
 })
 

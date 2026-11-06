@@ -1,15 +1,17 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-desktop-config
 pkgver=1.0.0
-pkgrel=18
-pkgdesc="macOS Tahoe Hyprland, Waybar, Rofi, Kitty, Hyprlock, and SDDM configurations for EnercoOS"
+pkgrel=20
+pkgdesc="macOS Tahoe Hyprland, Waybar, Rofi, Kitty, Hyprlock, Hypridle, and SDDM configurations for EnercoOS"
 arch=('any')
-url="https://enerco.internal"
+url="https://org.megatama-enerco.com"
 license=('GPL3')
-depends=('hyprland' 'hyprlock' 'waybar' 'rofi' 'swaybg' 'kitty' 'dunst' 'sddm' 'inter-font' 'capitaine-cursors')
+depends=('hyprland' 'hyprlock' 'hypridle' 'waybar' 'rofi' 'swaybg' 'kitty' 'dunst' 'sddm' 'weston' 'inter-font' 'capitaine-cursors')
 source=(
     "hyprland.lua"
     "hyprland.conf"
+    "hypridle.conf"
+    "enerco.desktop"
     "waybar-config.jsonc"
     "waybar-style.css"
     "rofi-config.rasi"
@@ -24,18 +26,20 @@ source=(
     "gtk3-settings.ini"
     "gtk-mac.css"
 )
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 package() {
-    # SDDM System Configuration
+    # SDDM System Configuration & Wayland Session Entry
     install -Dm644 "${srcdir}/sddm-enerco.conf" "${pkgdir}/etc/sddm.conf.d/10-enerco.conf"
+    install -Dm644 "${srcdir}/enerco.desktop" "${pkgdir}/usr/share/wayland-sessions/enerco.desktop"
 
     # System GTK defaults
     install -Dm644 "${srcdir}/gtk3-settings.ini" "${pkgdir}/etc/gtk-3.0/settings.ini"
     install -Dm644 "${srcdir}/gtk3-settings.ini" "${pkgdir}/etc/gtk-4.0/settings.ini"
 
-    # System Hyprlock default
+    # System Hyprlock & Hypridle defaults
     install -Dm644 "${srcdir}/hyprlock.conf" "${pkgdir}/etc/hypr/hyprlock.conf"
+    install -Dm644 "${srcdir}/hypridle.conf" "${pkgdir}/etc/hypr/hypridle.conf"
 
     # System Rofi theme defaults
     install -Dm644 "${srcdir}/rofi-menubar.rasi" "${pkgdir}/usr/share/rofi/themes/menubar.rasi"
@@ -44,6 +48,7 @@ package() {
     install -Dm644 "${srcdir}/hyprland.lua" "${pkgdir}/etc/skel/.config/hypr/hyprland.lua"
     install -Dm644 "${srcdir}/hyprland.conf" "${pkgdir}/etc/skel/.config/hypr/hyprland.conf"
     install -Dm644 "${srcdir}/hyprlock.conf" "${pkgdir}/etc/skel/.config/hypr/hyprlock.conf"
+    install -Dm644 "${srcdir}/hypridle.conf" "${pkgdir}/etc/skel/.config/hypr/hypridle.conf"
     install -Dm644 "${srcdir}/waybar-config.jsonc" "${pkgdir}/etc/skel/.config/waybar/config.jsonc"
     install -Dm644 "${srcdir}/waybar-style.css" "${pkgdir}/etc/skel/.config/waybar/style.css"
     install -Dm644 "${srcdir}/rofi-config.rasi" "${pkgdir}/etc/skel/.config/rofi/config.rasi"

@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# EnercoOS macOS Menubar Dropdown System
+# Real, functional, positioned dropdown menus for Waybar
+# ==============================================================================
+set -euo pipefail
+
+MENU="${1:-apple}"
+THEME="/etc/skel/.config/rofi/menubar.rasi"
+if [[ -f "${HOME}/.config/rofi/menubar.rasi" ]]; then
+    THEME="${HOME}/.config/rofi/menubar.rasi"
+elif [[ -f "/usr/share/rofi/themes/menubar.rasi" ]]; then
+    THEME="/usr/share/rofi/themes/menubar.rasi"
+fi
+
+case "${MENU}" in
+    apple)
+        OFFSET=6
+        WIDTH=260
+        LINES=9
+        CHOICE=$(printf "About This Workstation\n────────────────────────\nSystem Settings...\nActivity Monitor\nTerminal\n────────────────────────\nLock Screen             ⌘L\nLog Out Enerco...     ⇧⌘Q\nRestart...\nShut Down..." | rofi -dmenu -theme-str "window { location: northwest; anchor: northwest; x-offset: ${OFFSET}px; y-offset: 32px; width: ${WIDTH}px; border-radius: 10px; } listview { lines: ${LINES}; }" -theme "${THEME}" -p "" || true)
+        case "${CHOICE}" in
+            *"About This Workstation"*) /usr/local/bin/enerco-welcome & ;;
+            *"System Settings"*) qs -c MacShell ipc call settings toggle 2>/dev/null || wdisplays 2>/dev/null || /usr/local/bin/enerco-control-center & ;;
+            *"Activity Monitor"*) kitty -e htop & ;;
+            *"Terminal"*) kitty & ;;
+            *"Lock Screen"*) /usr/local/bin/maclock & ;;
+            *"Log Out"*) hyprctl dispatch exit ;;
+            *"Restart"*) systemctl reboot ;;
+            *"Shut Down"*) systemctl poweroff ;;
+        esac
+        ;;
+
+    finder)
+        OFFSET=38
+        WIDTH=230
+        LINES=7
+        CHOICE=$(printf "About Finder\n────────────────────────\nPreferences...          ⌘,\n────────────────────────\nEmpty Trash...        ⇧⌘⌫\n────────────────────────\nHide Finder             ⌘H\nShow All Windows" | rofi -dmenu -theme-str "window { location: northwest; anchor: northwest; x-offset: ${OFFSET}px; y-offset: 32px; width: ${WIDTH}px; border-radius: 10px; } listview { lines: ${LINES}; }" -theme "${THEME}" -p "Finder" || true)
+        case "${CHOICE}" in
+            *"About Finder"*) /usr/local/bin/enerco-welcome & ;;
+            *"Preferences"*) thunar --preferences 2>/dev/null || true ;;
+            *"Empty Trash"*) thunar trash:/// & ;;
+            *"Hide Finder"*) hyprctl dispatch movetoworkspacesilent special ;;
+            *"Show All Windows"*) hyprctl dispatch togglespecialworkspace ;;
+        esac
+        ;;
+
+    file)
+        OFFSET=98
+        WIDTH=250
+        LINES=7
+        CHOICE=$(printf "New Finder Window       ⌘N\nNew Terminal           ⌘↩\nNew Tab                ⌘T\nOpen Folder...         ⌘O\n────────────────────────\nClose Window           ⌘W\n────────────────────────\nInstall EnercoOS       ⌘I" | rofi -dmenu -theme-str "window { location: northwest; anchor: northwest; x-offset: ${OFFSET}px; y-offset: 32px; width: ${WIDTH}px; border-radius: 10px; } listview { lines: ${LINES}; }" -theme "${THEME}" -p "File" || true)
+        case "${CHOICE}" in
+            *"New Finder Window"*) thunar ~ & ;;
+            *"New Terminal"*) kitty & ;;
+            *"New Tab"*) thunar ~ & ;;
+            *"Open Folder"*) thunar ~ & ;;
+            *"Close Window"*) hyprctl dispatch killactive ;;
+            *"Install EnercoOS"*) /usr/local/bin/enerco-installer & ;;
+        esac
+        ;;
+
+    edit)
+        OFFSET=142
+        WIDTH=220
+        LINES=7
+        CHOICE=$(printf "Undo                   ⌘Z\nRedo                  ⇧⌘Z\n────────────────────────\nCut                    ⌘X\nCopy                   ⌘C\nPaste                  ⌘V\nSelect All             ⌘A" | rofi -dmenu -theme-str "window { location: northwest; anchor: northwest; x-offset: ${OFFSET}px; y-offset: 32px; width: ${WIDTH}px; border-radius: 10px; } listview { lines: ${LINES}; }" -theme "${THEME}" -p "Edit" || true)
+        case "${CHOICE}" in
+            *"Cut"*) hyprctl dispatch sendshortcut "CTRL,X" ;;
+            *"Copy"*) hyprctl dispatch sendshortcut "CTRL,C" ;;
+            *"Paste"*) hyprctl dispatch sendshortcut "CTRL,V" ;;
+            *"Select All"*) hyprctl dispatch sendshortcut "CTRL,A" ;;
+            *"Undo"*) hyprctl dispatch sendshortcut "CTRL,Z" ;;
+            *"Redo"*) hyprctl dispatch sendshortcut "CTRL,Y" ;;
+        esac
+        ;;
+
+    view)
+        OFFSET=188
+        WIDTH=240
+        LINES=6
+        CHOICE=$(printf "Toggle Full Screen     ⌃⌘F\nToggle Floating         ⌘V\n────────────────────────\nToggle Layout Split     ⌘J\n────────────────────────\nReload Top Menubar    ⇧⌘W" | rofi -dmenu -theme-str "window { location: northwest; anchor: northwest; x-offset: ${OFFSET}px; y-offset: 32px; width: ${WIDTH}px; border-radius: 10px; } listview { lines: ${LINES}; }" -theme "${THEME}" -p "View" || true)
+        case "${CHOICE}" in
+            *"Full Screen"*) hyprctl dispatch fullscreen 1 ;;
+            *"Floating"*) hyprctl dispatch togglefloating ;;
+            *"Layout Split"*) hyprctl dispatch togglesplit ;;
+            *"Reload"*) /usr/local/bin/macshell-start & ;;
+        esac
+        ;;
+
+    window)
+        OFFSET=238
+        WIDTH=240
+        LINES=7
+        CHOICE=$(printf "Minimize Window        ⌘M\nZoom / Maximize\n────────────────────────\nCycle Windows         ⌘Tab\nTile Window Left\nTile Window Right\n────────────────────────\nClose Window           ⌘W" | rofi -dmenu -theme-str "window { location: northwest; anchor: northwest; x-offset: ${OFFSET}px; y-offset: 32px; width: ${WIDTH}px; border-radius: 10px; } listview { lines: ${LINES}; }" -theme "${THEME}" -p "Window" || true)
+        case "${CHOICE}" in
+            *"Minimize"*) hyprctl dispatch movetoworkspacesilent special ;;
+            *"Zoom"*) hyprctl dispatch fullscreen 1 ;;
+            *"Cycle"*) rofi -show window & ;;
+            *"Tile Window Left"*) hyprctl dispatch movewindow l ;;
+            *"Tile Window Right"*) hyprctl dispatch movewindow r ;;
+            *"Close Window"*) hyprctl dispatch killactive ;;
+        esac
+        ;;
+
+    help)
+        OFFSET=308
+        WIDTH=260
+        LINES=5
+        CHOICE=$(printf "EnercoOS Workstation Help\nMTERP ERP Documentation\n────────────────────────\nmacOS Keyboard Shortcuts\nAbout This Workstation" | rofi -dmenu -theme-str "window { location: northwest; anchor: northwest; x-offset: ${OFFSET}px; y-offset: 32px; width: ${WIDTH}px; border-radius: 10px; } listview { lines: ${LINES}; }" -theme "${THEME}" -p "Help" || true)
+        case "${CHOICE}" in
+            *"Help"*) chromium --app=https://org.megatama-enerco.com & ;;
+            *"MTERP"*) /usr/local/bin/enerco-mterp & ;;
+            *"Shortcuts"*) /usr/local/bin/enerco-welcome & ;;
+            *"About"*) /usr/local/bin/enerco-welcome & ;;
+        esac
+        ;;
+esac
