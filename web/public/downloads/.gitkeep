@@ -1,0 +1,2 @@
+# Static ISO downloads directory for org.megatama-enerco.com/downloads/
+# Run `npm run sync:iso` inside `web/` to hardlink/symlink built ISOs from `../dist/`.

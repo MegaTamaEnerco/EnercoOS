@@ -74,8 +74,10 @@ class TestF01GitReconciliationBoundary(unittest.TestCase):
     def test_tracked_file_size_limits(self):
         """T2-F01-4: Boundary: Assert no tracked repository file exceeds 50MB (ISO bloat boundary)."""
         max_size = 50 * 1024 * 1024  # 50 MB
-        for root, _, files in os.walk(REPO_ROOT):
-            if ".git" in root or "dist" in root or "results" in root:
+        ignored_dirs = {".git", "dist", "results", "node_modules", ".next", "downloads"}
+        for root, dirs, files in os.walk(REPO_ROOT):
+            dirs[:] = [d for d in dirs if d not in ignored_dirs]
+            if any(part in ignored_dirs for part in root.split(os.sep)):
                 continue
             for f in files:
                 p = os.path.join(root, f)

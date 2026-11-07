@@ -38,6 +38,14 @@ __pycache__/
 *.pyc
 /tests/results/
 
+# Next.js web portal build and dependency artifacts
+web/node_modules/
+web/.next/
+web/out/
+web/logs/
+web/public/downloads/*.iso
+!web/public/downloads/.gitkeep
+
 # Editor and OS noise
 .vscode/
 .idea/
