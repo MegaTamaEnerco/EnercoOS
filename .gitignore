@@ -45,6 +45,8 @@ web/out/
 web/logs/
 web/public/downloads/*.iso
 !web/public/downloads/.gitkeep
+web/PRIVATE_DEPLOY_GUIDE.md
+web/ecosystem.config.cjs
 
 # Editor and OS noise
 .vscode/

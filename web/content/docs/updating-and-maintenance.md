@@ -1,94 +1,83 @@
 ---
-title: "Updating EnercoOS & Adding Docs"
-description: "Workflow for building updated EnercoOS ISOs, adding new Markdown documentation pages, and publishing new ISO releases on org.megatama-enerco.com."
-category: "Operations & Deployment"
+title: "System Updates & Workstation Maintenance"
+description: "Guide for updating EnercoOS workstations with pacman, managing dual kernels (linux-zen and linux), verifying ZRAM swap, and inspecting session logs."
+category: "Operations & Administration"
 order: 5
 updatedAt: "2026-11-07"
 ---
 
-## 1. How to Add or Update Documentation
+## 1. Updating EnercoOS Packages (`pacman`)
 
-All documentation on `org.megatama-enerco.com/docs` is driven directly by Markdown files inside `web/content/docs/`. No database or React code changes are required.
+EnercoOS uses the standard Arch Linux package manager (`pacman`) alongside the on-system `enerco-local` repository (`/var/cache/enerco-repo`).
 
-### Creating a New Documentation Page
+### Performing a Full System Upgrade
 
-Create a new `.md` file in `web/content/docs/<your-slug>.md` with YAML frontmatter at the top:
-
-```markdown
----
-title: "VPN & Corporate Network Setup"
-description: "Configuring OpenVPN and WireGuard profiles on EnercoOS workstations."
-category: "Operations & Deployment"
-order: 8
-updatedAt: "2026-11-07"
----
-
-## Connecting to PT Mega Tama Enerco VPN
-
-Run the following command or import your `.ovpn` profile in NetworkManager...
-```
-
-- **`category`:** Groups the document in the left sidebar (`Fundamentals`, `User Guide`, `Engineering`, `Operations & Deployment`, or any custom category name).
-- **`order`:** Controls the sort order in the sidebar (lowest number first).
-- **Table of Contents:** Any `##` (`h2`) and `###` (`h3`) headings in your Markdown are automatically extracted into the right-hand **On This Page** navigation rail.
-
----
-
-## 2. How to Publish a New EnercoOS ISO Release
-
-When you modify an EnercoOS package in `pkgs/`:
-
-### Step 1: Bump `pkgrel` and Build the ISO
-
-1. Increment `pkgrel` in the modified package's `pkgs/<package>/PKGBUILD`.
-2. Run the automated test suite and build the ISO:
-   ```bash
-   python tests/runner.py
-   sudo ./build.sh
-   ```
-3. The built ISO is written to `dist/enercoos-YYYY.MM.DD-x86_64.iso`.
-
-### Step 2: Link the ISO into `web/public/downloads/`
-
-From the `web/` directory, run:
+Open **Kitty Terminal** (`Super + Return`) and run:
 
 ```bash
-cd web
-npm run sync:iso
+sudo pacman -Syu
 ```
 
-This script hardlinks (or symlinks) every `.iso` file from `../dist/` into `web/public/downloads/` so Next.js can serve `/downloads/enercoos-YYYY.MM.DD-x86_64.iso` directly without duplicating 2.8 GB on disk.
+This synchronizes all enabled repositories (`enerco-local`, `core`, `extra`) and upgrades installed packages in a single atomic transaction.
 
-### Step 3: Add a Release Note File in `web/content/releases/`
+### Cleaning the Package Cache
 
-Create `web/content/releases/YYYY.MM.DD.md` (for example `web/content/releases/2026.12.01.md`):
-
-```markdown
----
-version: "2026.12.01"
-codename: "Liquid Glass Enterprise"
-date: "2026-12-01"
-channel: "Stable"
-isoFilename: "enercoos-2026.12.01-x86_64.iso"
-isoUrl: "/downloads/enercoos-2026.12.01-x86_64.iso"
-isoSize: "2.8 GB"
-sha256: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-kernel: "Linux 7.2.14-zen1 + Linux 7.2.14"
-installer: "Calamares 3.3.11 (Qt6)"
-shell: "MacShell 1.0.0-5 (Quickshell 0.3.2 + Hyprland 0.57.1)"
----
-
-## Highlights in 2026.12.01
-
-- Updated kernel and security packages
-- Improved MTERP session launch speed
-```
-
-### Step 4: Rebuild & Reload PM2
+To reclaim disk space while keeping the two most recent package versions for safe rollback:
 
 ```bash
-cd web
-npm run pm2:reload
+sudo paccache -rk2
 ```
 
-The landing page hero badge, `/releases` download button, SHA-256 verifier, and release history timeline will immediately update to your newest version.
+---
+
+## 2. Managing Dual Kernels (`linux-zen` & `linux`)
+
+Every EnercoOS workstation installs two kernels into `/boot` and registers both in `GRUB`:
+
+1. **`linux-zen` (`vmlinuz-linux-zen`):** Default low-latency desktop kernel tuned for interactive Wayland responsiveness.
+2. **`linux` (`vmlinuz-linux`):** Mainline LTS/fallback kernel for maximum hardware compatibility.
+
+To regenerate all `mkinitcpio` initramfs images and update the GRUB boot menu after modifying `/etc/mkinitcpio.conf` or `/etc/default/grub`:
+
+```bash
+sudo mkinitcpio -P
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+---
+
+## 3. Verifying ZRAM Swap & I/O Scheduler Tuning
+
+EnercoOS configures compressed `zstd` in-memory swap via `systemd-zram-generator` (`/etc/systemd/zram-generator.conf`) and applies CachyOS-inspired `udev` I/O scheduler rules (`/etc/udev/rules.d/60-enerco-ioschedulers.rules`).
+
+Check active ZRAM compression ratio and swap status:
+
+```bash
+zramctl
+swapon --show
+```
+
+Check active block device I/O schedulers (`none`/`kyber` on NVMe, `mq-deadline`/`bfq` on SSD/HDD):
+
+```bash
+cat /sys/block/*/queue/scheduler
+```
+
+---
+
+## 4. Troubleshooting Desktop Session & Display Logs
+
+If a display or GPU issue occurs, `enerco-session` and `enerco-macshell` write structured diagnostics that can be inspected from any terminal or TTY (`Ctrl + Alt + F3`):
+
+| Component | Diagnostic Command |
+| :--- | :--- |
+| **SDDM Display Manager** | `journalctl -u sddm -b --no-pager` |
+| **MacShell Supervisor & Quickshell** | `cat ~/.local/state/enerco-macshell.log` |
+| **Hyprland Compositor** | `hyprctl systeminfo` |
+| **NetworkManager & DNS** | `nmcli general status && journalctl -u NetworkManager -b` |
+
+To restart the Liquid Glass shell (`MacBar`, `MacDock`, `MacSpot`) inside an active session without logging out:
+
+```bash
+enerco-macshell --reload
+```

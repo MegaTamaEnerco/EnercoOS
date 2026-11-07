@@ -55,8 +55,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/docs/deployment-pm2-cloudflared" className="hover:text-white transition">
-                  Deploy with PM2 & Cloudflared
+                <Link href="/docs/updating-and-maintenance" className="hover:text-white transition">
+                  System Updates & Maintenance
                 </Link>
               </li>
             </ul>
@@ -70,11 +70,6 @@ export function Footer() {
               <li>
                 <Link href="/releases" className="hover:text-white transition">
                   Direct ISO Downloads & SHA-256
-                </Link>
-              </li>
-              <li>
-                <Link href="/docs/updating-and-maintenance" className="hover:text-white transition">
-                  Updating Docs & Releases
                 </Link>
               </li>
               <li>

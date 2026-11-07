@@ -320,18 +320,18 @@ sudo ./build.sh`}
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-white">
-              Documentation & Operations Guides
+              Documentation & Workstation Guides
             </h2>
             <p className="mt-1 text-sm text-[#b4bcd0]">
-              Managed directly via Markdown files in `web/content/docs/` — ready for instant updates.
+              Installation manuals, Liquid Glass desktop shortcuts, PKGBUILD architecture, and legal notices.
             </p>
           </div>
           <Link
-            href="/docs/deployment-pm2-cloudflared"
+            href="/docs"
             className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/[0.04] px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-white/[0.08]"
           >
-            <Server className="h-3.5 w-3.5 text-[#58a6ff]" />
-            <span>PM2 + Cloudflared Deployment Guide</span>
+            <BookOpen className="h-3.5 w-3.5 text-[#58a6ff]" />
+            <span>Browse All Documentation →</span>
           </Link>
         </div>
 
