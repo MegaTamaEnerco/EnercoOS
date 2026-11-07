@@ -98,6 +98,19 @@ mkdir -p "${OUT_DIR}"
 echo "[STEP 3/4] Preparing pacman build configuration..."
 sed "s|@ENERCO_LOCAL_REPO_PATH@|${LOCALREPO_DIR}|g" "${PACMAN_CONF_TEMPLATE}" > "${BUILD_PACMAN_CONF}"
 
+# Ensure airootfs systemd unit links are genuine POSIX symlinks (guards against Windows core.symlinks=false rsync)
+mkdir -p "${SCRIPT_DIR}/airootfs/etc/systemd/system/multi-user.target.wants" \
+         "${SCRIPT_DIR}/airootfs/etc/systemd/system-generators"
+ln -sf /dev/null "${SCRIPT_DIR}/airootfs/etc/systemd/system/NetworkManager-wait-online.service"
+ln -sf /dev/null "${SCRIPT_DIR}/airootfs/etc/systemd/system/systemd-loop.service"
+ln -sf /dev/null "${SCRIPT_DIR}/airootfs/etc/systemd/system/systemd-loop@.service"
+ln -sf /dev/null "${SCRIPT_DIR}/airootfs/etc/systemd/system/systemd-networkd-wait-online.service"
+ln -sf /dev/null "${SCRIPT_DIR}/airootfs/etc/systemd/system-generators/systemd-gpt-auto-generator"
+ln -sf /usr/lib/systemd/system/NetworkManager.service "${SCRIPT_DIR}/airootfs/etc/systemd/system/multi-user.target.wants/NetworkManager.service"
+ln -sf /usr/lib/systemd/system/irqbalance.service "${SCRIPT_DIR}/airootfs/etc/systemd/system/multi-user.target.wants/irqbalance.service"
+ln -sf /usr/lib/systemd/system/systemd-zram-setup@.service "${SCRIPT_DIR}/airootfs/etc/systemd/system/multi-user.target.wants/systemd-zram-setup@zram0.service"
+ln -sf /usr/lib/systemd/system/vboxservice.service "${SCRIPT_DIR}/airootfs/etc/systemd/system/multi-user.target.wants/vboxservice.service"
+
 # Step 4: Run mkarchiso
 echo "[STEP 4/4] Executing mkarchiso..."
 mkarchiso -v \
