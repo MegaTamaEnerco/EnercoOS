@@ -5,5 +5,9 @@
   "accent": "#0071e3",
   "darkMode": true,
   "barLogoMode": "custom",
-  "barCustomLogoPath": "/usr/share/pixmaps/enerco-logo.svg"
+  "barCustomLogoPath": "/usr/share/pixmaps/enerco-logo.svg",
+  "wallpaperPath": "/usr/share/backgrounds/enerco-mac.png",
+  "wpRestorePath": "/usr/share/backgrounds/enerco-mac.png",
+  "wallpaperCmd": "pkill -x swaybg 2>/dev/null; setsid swaybg -i {} -m fill >/dev/null 2>&1 &"
 }
+

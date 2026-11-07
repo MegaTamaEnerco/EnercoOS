@@ -24,11 +24,21 @@ class TestF05SddmWaylandGreeterBoundary(unittest.TestCase):
     def test_sddm_compositor_software_rendering_args(self):
         """T2-F05-2: Boundary: Verify SDDM compositor configuration handles VM software rendering mode."""
         content = read_repo_file("pkgs/enerco-desktop-config/sddm-enerco.conf")
-        # Greeter environment must allow layer-shell and software rasterizer if needed
+        # Greeter environment must configure software rasterizer and NOT force layer-shell under weston --shell=kiosk
         self.assertIn(
             "GreeterEnvironment=",
             content,
-            "sddm-enerco.conf must define GreeterEnvironment variables for Wayland protocol integration",
+            "sddm-enerco.conf must define GreeterEnvironment variables for Wayland software rendering",
+        )
+        self.assertNotIn(
+            "QT_WAYLAND_SHELL_INTEGRATION=layer-shell",
+            content,
+            "sddm-enerco.conf must not force layer-shell under weston --shell=kiosk (weston uses xdg-shell)",
+        )
+        self.assertIn(
+            "--renderer=pixman",
+            content,
+            "sddm-enerco.conf must pass --renderer=pixman to weston for VM compatibility",
         )
 
     def test_sddm_wayland_session_directory_validation(self):
