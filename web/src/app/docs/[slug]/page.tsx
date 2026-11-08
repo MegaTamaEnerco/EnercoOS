@@ -89,7 +89,7 @@ export default async function DocArticlePage({
                   </code>
                 </span>
               </div>
-              <span>Edit Markdown and run `npm run pm2:reload` to publish updates</span>
+              <span>Documentation guides are statically compiled at build time</span>
             </div>
 
             {/* Prev / Next Navigation */}

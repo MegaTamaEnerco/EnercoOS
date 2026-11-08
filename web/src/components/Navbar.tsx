@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Download, ExternalLink, BookOpen, Disc, Layers } from "lucide-react";
+import { Download, ExternalLink, BookOpen, Disc, Layers, RefreshCw } from "lucide-react";
 
 export function Navbar() {
   return (
@@ -41,17 +41,18 @@ export function Navbar() {
               Documentation
             </Link>
             <Link
+              href="/docs/updating-and-maintenance"
+              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-[#c5cde0] transition hover:bg-white/[0.06] hover:text-white"
+            >
+              <RefreshCw className="h-4 w-4 text-[#58a6ff]" />
+              Updates
+            </Link>
+            <Link
               href="/releases"
               className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-[#c5cde0] transition hover:bg-white/[0.06] hover:text-white"
             >
               <Disc className="h-4 w-4 text-[#58a6ff]" />
               Releases & ISO
-            </Link>
-            <Link
-              href="/docs/deployment-pm2-cloudflared"
-              className="rounded-lg px-3 py-1.5 text-sm font-medium text-[#c5cde0] transition hover:bg-white/[0.06] hover:text-white"
-            >
-              PM2 + Cloudflared
             </Link>
           </nav>
         </div>

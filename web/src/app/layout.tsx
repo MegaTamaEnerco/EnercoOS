@@ -24,6 +24,45 @@ export const metadata: Metadata = {
   description:
     "Official portal, documentation hub, and ISO release downloads for EnercoOS 2026 Enterprise Workstation by PT Mega Tama Enerco (org.megatama-enerco.com).",
   metadataBase: new URL("https://org.megatama-enerco.com"),
+  keywords: [
+    "EnercoOS",
+    "Arch Linux",
+    "Enterprise Linux",
+    "Hyprland",
+    "Quickshell",
+    "Liquid Glass",
+    "MTERP",
+    "PT Mega Tama Enerco",
+  ],
+  authors: [{ name: "PT Mega Tama Enerco", url: "https://org.megatama-enerco.com" }],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://org.megatama-enerco.com",
+    siteName: "EnercoOS Enterprise Workstation",
+    title: "EnercoOS 2026 — Liquid Glass Enterprise Linux Workstation",
+    description:
+      "Open-source enterprise Arch Linux workstation powered by Hyprland, Quickshell Liquid Glass, Calamares 3.3.11, and native MTERP integration.",
+    images: [
+      {
+        url: "/enerco-mac.png",
+        width: 1920,
+        height: 1080,
+        alt: "EnercoOS 2026 Liquid Glass Desktop",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EnercoOS 2026 — Liquid Glass Enterprise Linux Workstation",
+    description:
+      "Open-source enterprise Arch Linux workstation powered by Hyprland, Quickshell Liquid Glass, Calamares 3.3.11, and native MTERP integration.",
+    images: ["/enerco-mac.png"],
+  },
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
