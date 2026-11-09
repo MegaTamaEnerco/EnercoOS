@@ -13,6 +13,13 @@ if command -v xhost &>/dev/null; then
     xhost +si:localuser:root 2>/dev/null || xhost + 2>/dev/null || true
 fi
 
+# Ensure Calamares unpackfs source media and airootfs.sfs paths exist
+if command -v sudo &>/dev/null; then
+    if [[ -x /usr/local/bin/enerco-prepare-unpackfs ]]; then
+        sudo /usr/local/bin/enerco-prepare-unpackfs 2>/dev/null || true
+    fi
+fi
+
 # Determine active Wayland socket (waybar/macshell/rofi may not always export WAYLAND_DISPLAY)
 WL_SOCK="${WAYLAND_DISPLAY:-wayland-1}"
 if [[ ! -S "${XDG_RUNTIME_DIR}/${WL_SOCK}" ]]; then

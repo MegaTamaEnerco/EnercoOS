@@ -12,3 +12,8 @@ fi
 
 # Ensure correct permissions for live user
 chown -R 1000:1000 "/home/${LIVE_USER}" 2>/dev/null || true
+
+# Prepare Calamares unpackfs source media
+if [[ -x /usr/local/bin/enerco-prepare-unpackfs ]]; then
+    /usr/local/bin/enerco-prepare-unpackfs 2>/dev/null || true
+fi

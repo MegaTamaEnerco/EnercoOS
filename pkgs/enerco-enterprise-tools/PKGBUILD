@@ -1,7 +1,7 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-enterprise-tools
 pkgver=1.0.0
-pkgrel=17
+pkgrel=18
 pkgdesc="Enterprise tooling, session initialization, MTERP launcher, and CachyOS-grade performance tuning for EnercoOS"
 arch=('any')
 url="https://org.megatama-enerco.com"
@@ -12,6 +12,7 @@ source=(
     "enerco-lockdown"
     "enerco-welcome"
     "enerco-installer"
+    "enerco-prepare-unpackfs"
     "enerco-apple-menu"
     "enerco-control-center"
     "enerco-mterp"
@@ -28,7 +29,7 @@ source=(
     "00-journal-size.conf"
     "20-audio.conf"
 )
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 package() {
     # Binaries and session wrappers
@@ -36,6 +37,7 @@ package() {
     install -Dm755 "${srcdir}/enerco-lockdown" "${pkgdir}/usr/local/bin/enerco-lockdown"
     install -Dm755 "${srcdir}/enerco-welcome" "${pkgdir}/usr/local/bin/enerco-welcome"
     install -Dm755 "${srcdir}/enerco-installer" "${pkgdir}/usr/local/bin/enerco-installer"
+    install -Dm755 "${srcdir}/enerco-prepare-unpackfs" "${pkgdir}/usr/local/bin/enerco-prepare-unpackfs"
     install -Dm755 "${srcdir}/enerco-apple-menu" "${pkgdir}/usr/local/bin/enerco-apple-menu"
     install -Dm755 "${srcdir}/enerco-control-center" "${pkgdir}/usr/local/bin/enerco-control-center"
     install -Dm755 "${srcdir}/enerco-mterp" "${pkgdir}/usr/local/bin/enerco-mterp"

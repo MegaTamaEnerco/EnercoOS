@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# EnercoOS Calamares UnpackFS Source Resolver
+# Guarantees that /run/archiso/bootmnt/arch/x86_64/airootfs.sfs and vmlinuz-linux
+# exist across USB, Ventoy, copytoram, and virtual machine boot environments.
+# ==============================================================================
+
+set -euo pipefail
+
+TARGET_SFS="/run/archiso/bootmnt/arch/x86_64/airootfs.sfs"
+TARGET_KERNEL="/run/archiso/bootmnt/arch/boot/x86_64/vmlinuz-linux"
+CONF_FILE="/etc/calamares/modules/unpackfs.conf"
+
+ensure_kernel() {
+    if [[ ! -f "${TARGET_KERNEL}" ]]; then
+        mkdir -p "$(dirname "${TARGET_KERNEL}")"
+        local k=""
+        for candidate in /usr/lib/modules/*/vmlinuz /boot/vmlinuz-linux /boot/vmlinuz*; do
+            if [[ -f "${candidate}" && ! "${candidate}" =~ zen ]]; then
+                k="${candidate}"
+                break
+            fi
+        done
+        if [[ -z "${k}" ]]; then
+            for candidate in /usr/lib/modules/*/vmlinuz /boot/vmlinuz*; do
+                if [[ -f "${candidate}" ]]; then
+                    k="${candidate}"
+                    break
+                fi
+            done
+        fi
+        if [[ -n "${k}" ]]; then
+            cp -f "${k}" "${TARGET_KERNEL}" 2>/dev/null || ln -sf "${k}" "${TARGET_KERNEL}" 2>/dev/null || true
+        fi
+    fi
+}
+
+# If both target sfs and kernel exist, nothing more needed
+if [[ -f "${TARGET_SFS}" ]]; then
+    ensure_kernel
+    exit 0
+fi
+
+# Step 1: If /run/archiso/bootmnt is not mounted, attempt mounting boot media
+if ! mountpoint -q /run/archiso/bootmnt 2>/dev/null; then
+    mkdir -p /run/archiso/bootmnt
+
+    for dev in /dev/disk/by-label/ENERCO_* /dev/disk/by-label/*arch* /dev/disk/by-label/*ARCH* /dev/disk/by-label/*Ventoy* /dev/disk/by-label/*VENTOY*; do
+        if [[ -e "${dev}" ]]; then
+            mount -o ro "${dev}" /run/archiso/bootmnt 2>/dev/null && break
+        fi
+    done
+
+    if ! mountpoint -q /run/archiso/bootmnt 2>/dev/null; then
+        while read -r bdev; do
+            if [[ -b "${bdev}" ]]; then
+                mount -o ro "${bdev}" /run/archiso/bootmnt 2>/dev/null && break
+            fi
+        done < <(blkid -t TYPE=iso9660 -o device 2>/dev/null || true)
+    fi
+fi
+
+if [[ -f "${TARGET_SFS}" ]]; then
+    ensure_kernel
+    exit 0
+fi
+
+# Step 2: Search for airootfs.sfs in copytoram or alternate live mounts
+FOUND_SFS=""
+for candidate in \
+    /run/archiso/copytoram/airootfs.sfs \
+    /run/archiso/copytoram/*/airootfs.sfs \
+    /run/archiso/airootfs/airootfs.sfs \
+    /run/initramfs/live/arch/x86_64/airootfs.sfs \
+    /run/initramfs/live/airootfs.sfs; do
+    if [[ -f "${candidate}" ]]; then
+        FOUND_SFS="${candidate}"
+        break
+    fi
+done
+
+if [[ -z "${FOUND_SFS}" ]]; then
+    FOUND_SFS="$(find /run /mnt /media -maxdepth 6 -name "airootfs.sfs" 2>/dev/null | head -n 1 || true)"
+fi
+
+if [[ -n "${FOUND_SFS}" ]]; then
+    mkdir -p "$(dirname "${TARGET_SFS}")"
+    ln -sf "${FOUND_SFS}" "${TARGET_SFS}"
+    ensure_kernel
+
+    if [[ -f "${CONF_FILE}" ]]; then
+        cat <<EOF > "${CONF_FILE}"
+---
+unpack:
+    - source: "${FOUND_SFS}"
+      sourcefs: "squashfs"
+      destination: ""
+    - source: "${TARGET_KERNEL}"
+      sourcefs: "file"
+      destination: "/boot/vmlinuz-linux"
+      weight: 1
+EOF
+    fi
+    exit 0
+fi
+
+# Step 3: Probe unmounted block devices for ISO with arch/x86_64/airootfs.sfs
+for bdev in $(lsblk -dpno NAME 2>/dev/null); do
+    if [[ -b "${bdev}" ]] && ! mountpoint -q "${bdev}" 2>/dev/null; then
+        mkdir -p /tmp/enerco-probe
+        if mount -o ro "${bdev}" /tmp/enerco-probe 2>/dev/null; then
+            if [[ -f "/tmp/enerco-probe/arch/x86_64/airootfs.sfs" ]]; then
+                umount /tmp/enerco-probe 2>/dev/null || true
+                mount -o ro "${bdev}" /run/archiso/bootmnt 2>/dev/null || true
+                ensure_kernel
+                rmdir /tmp/enerco-probe 2>/dev/null || true
+                exit 0
+            fi
+            umount /tmp/enerco-probe 2>/dev/null || true
+        fi
+        rmdir /tmp/enerco-probe 2>/dev/null || true
+    fi
+done
+
+exit 0
+
