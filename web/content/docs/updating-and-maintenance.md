@@ -1,12 +1,121 @@
 ---
 title: "System Updates & Workstation Maintenance"
-description: "Guide for updating EnercoOS workstations with pacman, managing dual kernels (linux-zen and linux), verifying ZRAM swap, and inspecting session logs."
+description: "Comprehensive guide for updating EnercoOS workstations with pacman, upgrading to native MacShell Spotlight & universal macOS window traffic lights on installed devices, managing dual kernels, and inspecting diagnostics."
 category: "Operations & Administration"
 order: 5
-updatedAt: "2026-11-07"
+updatedAt: "2026-11-10"
 ---
 
-## 1. Updating EnercoOS Packages (`pacman`)
+## 1. Upgrading Installed Devices (Spotlight & Window Controls)
+
+If you already have an EnercoOS workstation installed and want to upgrade to the latest **native Liquid Glass Spotlight** (with math evaluations and clipboard history) and **universal macOS window controls** (Close, Minimize, Maximize) across every application—including Terminal (`kitty`)—follow the steps below without reinstalling the operating system.
+
+### Step 1: Upgrade System Packages & Install `cliphist`
+
+Open **Terminal** (`Super + Return` or `kitty`) and update your packages:
+
+```bash
+# Synchronize repositories and upgrade all core packages
+sudo pacman -Syu
+
+# Install cliphist (required for Spotlight clipboard history with thumbnail previews)
+sudo pacman -S --needed cliphist
+```
+
+> [!NOTE]
+> Ensure `enerco-macshell >= 1.0.0-6` and `enerco-desktop-config >= 1.0.0-24` are installed. Check with:
+> `pacman -Q enerco-macshell enerco-desktop-config`
+
+---
+
+### Step 2: Switch to Native Liquid Glass Spotlight
+
+To switch from legacy Rofi to the native Liquid Glass Spotlight in your existing user profile:
+
+```bash
+# Set launcher to empty string in MacBar configuration (enables native MacSpot)
+sed -i 's/"launcher": "rofi -show drun"/"launcher": ""/' ~/.config/macbar/settings.json
+
+# If not present, add it directly:
+# jq '.launcher = ""' ~/.config/macbar/settings.json > /tmp/s.json && mv /tmp/s.json ~/.config/macbar/settings.json
+```
+
+In `~/.config/macdock/pinned.json`, replace `"rofi"` with `"chromium"` so the dock displays standard apps:
+
+```bash
+sed -i 's/"rofi"/"chromium"/' ~/.config/macdock/pinned.json
+```
+
+---
+
+### Step 3: Enable Universal macOS Traffic Lights (`WindowDecor`)
+
+Create or update `~/.config/macbar/windecor.json` to enable macOS titlebars and traffic lights on all windows:
+
+```bash
+mkdir -p ~/.config/macbar
+cat << 'EOF' > ~/.config/macbar/windecor.json
+{
+  "enabled": true,
+  "showTitle": true,
+  "radius": 10,
+  "excludeClasses": [
+    "org.quickshell",
+    "quickshell"
+  ]
+}
+EOF
+```
+
+Configure **Kitty Terminal** so it cleanly integrates with the new macOS window frames:
+
+```bash
+mkdir -p ~/.config/kitty
+grep -q "hide_window_decorations" ~/.config/kitty/kitty.conf 2>/dev/null || \
+  echo "hide_window_decorations yes" >> ~/.config/kitty/kitty.conf
+```
+
+---
+
+### Step 4: Update Hyprland Keybindings & Layer Rules
+
+In `~/.config/hypr/hyprland.lua`, ensure the Spotlight and clipboard shortcuts are bound:
+
+```lua
+-- Application Launchers
+local menu = "qs -c MacShell ipc call spotlight toggle"
+hl.bind(mainMod .. " + space",      hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + V",          hl.dsp.exec_cmd("qs -c MacShell ipc call spotlight clipboard"))
+hl.bind(mainMod .. " + PERIOD",     hl.dsp.exec_cmd("qs -c MacShell ipc call spotlight emoji"))
+hl.bind(mainMod .. " + SHIFT + V",  hl.dsp.window.float({ action = "toggle" }))
+hl.bind("ALT + Tab",                hl.dsp.exec_cmd("qs -c MacShell ipc call switcher next"))
+hl.bind(mainMod .. " + Tab",        hl.dsp.exec_cmd("qs -c MacShell ipc call switcher next"))
+
+-- Layer Rules
+hl.layer_rule({ name = "blur-macspot", match = { namespace = "macspot" }, blur = true, ignore_alpha = 0.05 })
+hl.layer_rule({ name = "macwindecor",  match = { namespace = "macwindecor" }, no_anim = true })
+```
+
+---
+
+### Step 5: Reload Desktop Services (No Reboot Required)
+
+Apply all configuration updates immediately without restarting your machine:
+
+```bash
+# Reload Hyprland keybindings and layer rules
+hyprctl reload
+
+# Restart MacShell to load the WindowDecor layer and native Spotlight
+pkill -f quickshell || true
+setsid /usr/local/bin/macshell-start >/dev/null 2>&1 &
+```
+
+You can now use `Super + Space` for Spotlight, `Super + V` for Clipboard History, and click or drag the traffic lights on any window.
+
+---
+
+## 2. Standard Package Management (`pacman`)
 
 EnercoOS uses the standard Arch Linux package manager (`pacman`) alongside the on-system `enerco-local` repository (`/var/cache/enerco-repo`).
 
