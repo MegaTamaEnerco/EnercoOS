@@ -49,6 +49,11 @@ web/PRIVATE_DEPLOY_GUIDE.md
 web/ecosystem.config.cjs
 web/ecosystem.config.js
 
+# Private deployment and upload scripts (server IPs and credentials)
+scripts/upload-iso.ps1
+scripts/upload-iso.sh
+scripts/*.private.*
+
 
 # Editor and OS noise
 .vscode/
