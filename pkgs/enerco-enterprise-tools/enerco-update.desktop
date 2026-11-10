@@ -11,3 +11,4 @@ Categories=System;Settings;PackageManager;
 Keywords=update;upgrade;software;system;macshell;
 StartupNotify=true
 StartupWMClass=Software Update
+

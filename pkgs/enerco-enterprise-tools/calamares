@@ -15,3 +15,4 @@ if [[ -x /usr/local/bin/enerco-prepare-unpackfs ]]; then
 fi
 
 exec /usr/bin/calamares "$@"
+
