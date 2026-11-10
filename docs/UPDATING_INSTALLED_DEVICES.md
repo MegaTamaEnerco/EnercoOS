@@ -1,16 +1,50 @@
 # Guide: Upgrading Installed EnercoOS Workstations
 
-This guide provides step-by-step instructions for upgrading existing EnercoOS installations to use the **native Liquid Glass MacShell Spotlight** and the **universal macOS window controls (traffic lights)** across every application—including Terminal (`kitty`), Chromium, and standard windows—without reinstalling the OS.
+This guide provides step-by-step instructions for upgrading existing EnercoOS installations to use the **native Liquid Glass MacShell Spotlight**, **universal macOS window controls (traffic lights)**, and the **macOS Software Update experience** across every application—without reinstalling the OS.
 
 ---
 
-## Prerequisites
-- Working EnercoOS workstation with internet connectivity or access to the updated `enerco-local` repository.
-- Root or sudo privileges.
+## Method 1: One-Click Offline USB Update (Plug & Update)
+
+If your installed workstation is offline or in an air-gapped corporate network, you can update directly from any USB drive:
+
+1. **Copy the update packages** (from `localrepo/*.pkg.tar.zst` or the live ISO) to a USB flash drive.
+2. **Plug the USB drive** into the installed EnercoOS workstation.
+3. Open **Software Update** via:
+   - Clicking the Apple menu (`M` logo in the top-left) → **Software Update…**
+   - Or opening **System Settings** → **Software Update**
+   - Or running `enerco-update` in terminal:
+     ```bash
+     enerco-update
+     ```
+4. `enerco-update` will automatically detect the `.pkg.tar.zst` packages on the mounted USB drive (`/run/media/...`), install them, migrate your configuration files, and reload the desktop live without restarting!
+
+### Manual USB Terminal Command (Alternative)
+```bash
+# Install packages directly from USB
+sudo pacman -U /run/media/$USER/*/*.pkg.tar.zst
+
+# Run update migrator to apply macOS configs and reload desktop
+enerco-update
+```
 
 ---
 
-## Step 1: Upgrade System Packages
+## Method 2: Online Software Update (Network / Wi-Fi)
+
+If your workstation is connected to the internet or enterprise intranet:
+
+1. Click the Apple menu (`M` logo in the top-left) → **Software Update…**.
+2. Click **Install Now**.
+3. EnercoOS will download the latest packages, migrate configs, and reload the desktop automatically.
+
+---
+
+## Method 3: Step-by-Step Manual Terminal Update
+
+If you prefer to inspect and run each update step manually in terminal:
+
+### Step 1: Upgrade System Packages
 Open your terminal (`Super + Return` or `kitty`) and run:
 
 ```bash
@@ -23,11 +57,12 @@ sudo pacman -S --needed cliphist
 
 Verify that you are running the updated desktop shell packages:
 ```bash
-pacman -Q enerco-macshell enerco-desktop-config
+pacman -Q enerco-macshell enerco-desktop-config enerco-enterprise-tools
 ```
 Expected versions:
-- `enerco-macshell >= 1.0.0-6`
-- `enerco-desktop-config >= 1.0.0-24`
+- `enerco-macshell >= 1.0.0-7`
+- `enerco-desktop-config >= 1.0.0-25`
+- `enerco-enterprise-tools >= 1.0.0-20`
 
 ---
 

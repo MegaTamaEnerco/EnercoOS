@@ -96,7 +96,7 @@ def run_system_upgrade(progress_callback=None):
         if progress_callback:
             progress_callback(msg, frac)
 
-    # Step 1: Sync databases
+    # Step 1: Sync databases & probe for offline USB packages
     log(steps[0], 0.15)
     cmd_prefix = []
     if os.geteuid() != 0:
@@ -104,6 +104,21 @@ def run_system_upgrade(progress_callback=None):
             cmd_prefix = ["pkexec"]
         elif shutil.which("sudo"):
             cmd_prefix = ["sudo"]
+
+    # Detect offline USB media containing EnercoOS update packages
+    usb_pkgs = []
+    for mount_root in ["/run/media", "/media", "/mnt"]:
+        if os.path.exists(mount_root):
+            for candidate in glob.glob(os.path.join(mount_root, "**", "enerco-*.pkg.tar.zst"), recursive=True):
+                if os.path.isfile(candidate) and candidate not in usb_pkgs:
+                    usb_pkgs.append(candidate)
+
+    if usb_pkgs:
+        log(f"Installing {len(usb_pkgs)} update packages from USB drive...", 0.25)
+        try:
+            subprocess.run(cmd_prefix + ["pacman", "-U", "--noconfirm", "--needed"] + usb_pkgs, check=False)
+        except Exception as e:
+            print(f"Warning installing USB packages: {e}")
 
     try:
         subprocess.run(cmd_prefix + ["pacman", "-Sy", "--noconfirm"], check=False)

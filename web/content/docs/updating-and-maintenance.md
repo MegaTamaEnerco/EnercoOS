@@ -6,9 +6,40 @@ order: 5
 updatedAt: "2026-11-10"
 ---
 
-## 1. Upgrading Installed Devices (Spotlight & Window Controls)
+## 1. Upgrading Installed Devices (Spotlight, Window Controls, Software Update)
 
-If you already have an EnercoOS workstation installed and want to upgrade to the latest **native Liquid Glass Spotlight** (with math evaluations and clipboard history) and **universal macOS window controls** (Close, Minimize, Maximize) across every application—including Terminal (`kitty`)—follow the steps below without reinstalling the operating system.
+Existing EnercoOS workstations can be updated to the latest release—gaining the **native Liquid Glass Spotlight**, **universal macOS window traffic lights**, and the **macOS Software Update center**—without reinstalling the operating system.
+
+### Option A: Offline Update from USB Drive (Recommended for Air-Gapped Workstations)
+
+If your installed workstation is offline, you can update directly using any USB drive:
+
+1. Copy the updated package files (`localrepo/*.pkg.tar.zst` or from the live USB) to a flash drive.
+2. Insert the USB flash drive into the installed workstation.
+3. Open **Software Update** from the Apple menu (`M` logo → **Software Update…**) or run `enerco-update` in terminal:
+   ```bash
+   enerco-update
+   ```
+4. `enerco-update` automatically detects the packages on the USB drive (`/run/media/...`), runs `pacman -U`, migrates your user configuration, and live-reloads MacShell without rebooting!
+
+You can also run a direct one-liner in terminal:
+```bash
+sudo pacman -U /run/media/$USER/*/*.pkg.tar.zst && enerco-update
+```
+
+---
+
+### Option B: Online One-Click Software Update
+
+If your workstation is connected to the internet or enterprise network:
+
+1. Click the Apple menu (`M` logo in the top-left) → **Software Update…**.
+2. Click **Install Now**.
+3. EnercoOS will download the latest packages, migrate configs, and reload the desktop automatically.
+
+---
+
+### Option C: Step-by-Step Manual Upgrade
 
 ### Step 1: Upgrade System Packages & Install `cliphist`
 
