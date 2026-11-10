@@ -11,8 +11,13 @@ updatedAt: "2026-11-07"
 EnercoOS uses a pure **Qt6 / QML Wayland shell** (`qs -c MacShell` via `Quickshell 0.3.2`) running on top of **Hyprland 0.57.1** (configured via `/etc/skel/.config/hypr/hyprland.lua`). Legacy status bars (`waybar`) and redundant notification daemons have been completely removed so the entire desktop runs inside a single unified Quickshell process:
 
 - **Top Menu Bar (`MacBar`):** Displays the **PT Mega Tama Enerco (`M`)** system menu, active application global menu (`File`, `Edit`, `View`, `Window`, `Help`), workspace indicator, system tray, Wi-Fi/Bluetooth/Audio controls, battery status, Control Center popover, and clock.
+- **Universal macOS Window Controls (`WindowDecor`):** Native macOS traffic lights on **every window** (Terminal, Chromium, Thunar, etc.) matching System Settings:
+  - **Red (`#FF5F57`):** Close window with macOS `"tink"` click sound.
+  - **Amber (`#FEBC2E`):** Minimize window to special workspace.
+  - **Green (`#28C840`):** Maximize / Zoom toggle (Alt-click for maximize, standard click for fullscreen).
+  - **Titlebar Drag & Double-Click:** Drag titlebar to move window; double-click to toggle maximize/restore.
 - **Floating Auto-Hide Dock (`MacDock`):** Liquid Glass dock with icon magnification, live window thumbnail previews, running app indicators, and Trash management.
-- **Enerco Search (`MacSpot`):** Instant application launcher, file finder, clipboard history manager, and emoji picker (`Super + Space`).
+- **Enerco Search (`MacSpot`):** Instant application launcher, real-time math evaluation, clipboard history manager (`Super + V`), and emoji picker (`Super + .`).
 - **Frosted Screen Locker (`MacLock`):** Hardware-accelerated Wayland session lock (`Super + L` or `/usr/local/bin/maclock`).
 
 ---
@@ -23,18 +28,19 @@ Here is the complete keyboard reference configured out of the box in `~/.config/
 
 | Shortcut | Action | Command / Dispatcher |
 | :--- | :--- | :--- |
-| `Super + Space` | Open **Enerco Search** (`MacSpot`) | `qs -c MacShell ipc call spotlight toggle \|\| rofi -show drun` |
+| `Super + Space` | Open **Enerco Search** (`MacSpot`) | `qs -c MacShell ipc call spotlight toggle` |
+| `Super + V` | Open **Clipboard History** (with image previews) | `qs -c MacShell ipc call spotlight clipboard` |
 | `Super + .` (Period) | Open **Emoji Picker** | `qs -c MacShell ipc call spotlight emoji` |
+| `Super + Shift + V` | Toggle Floating Window Mode | `hl.dsp.window.float({ action = "toggle" })` |
+| `Alt + Tab` / `Super + Tab` | MacShell Window Switcher | `qs -c MacShell ipc call switcher next` |
 | `Super + Z` | Open **Desktop & Dock Settings** | `qs -c MacShell ipc call settings toggle` |
 | `Super + Return` | Launch **Kitty** Terminal | `kitty` |
 | `Super + E` | Open **Thunar** File Manager | `thunar` |
 | `Super + B` | Launch **MTERP Enterprise Portal** | `/usr/local/bin/enerco-mterp` (`https://mterp.megatama-enerco.com`) |
 | `Super + I` | Launch **Install EnercoOS** (`Calamares`) | `/usr/local/bin/enerco-installer` |
 | `Super + W` / `Super + Q` | Close Active Window | `hl.dsp.window.close()` |
-| `Super + V` | Toggle Floating Window Mode | `hl.dsp.window.float({ action = "toggle" })` |
 | `Super + J` | Toggle Split Direction | `hl.dsp.layout("togglesplit")` |
 | `Super + D` | Show Desktop (Special Workspace) | `hyprctl dispatch togglespecialworkspace` |
-| `Super + Tab` | Switch Open Windows | `rofi -show window` |
 | `Super + L` | Lock Workstation Screen | `/usr/local/bin/maclock` |
 | `Super + Shift + S` | Area Screenshot to Clipboard | `grim -g "$(slurp)" - \| wl-copy` |
 | `Super + Shift + W` | Restart MacShell Supervisor | `/usr/local/bin/macshell-start &` |

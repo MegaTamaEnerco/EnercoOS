@@ -1,6 +1,6 @@
 {
   "terminal": "kitty",
-  "launcher": "rofi -show drun",
+  "launcher": "",
   "files": "thunar",
   "accent": "#0071e3",
   "darkMode": true,

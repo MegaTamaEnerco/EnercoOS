@@ -26,7 +26,7 @@ hl.monitor({
 -- Default applications
 local terminal    = "kitty"
 local fileManager = "thunar"
-local menu        = "qs -c MacShell ipc call spotlight toggle || rofi -show drun"
+local menu        = "qs -c MacShell ipc call spotlight toggle"
 
 -- Enterprise Autostart Services
 hl.on("hyprland.start", function ()
@@ -170,18 +170,20 @@ local mainMod = "SUPER"
 -- macOS Native Keybindings & MacShell Controls
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + space",  hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + V",      hl.dsp.exec_cmd("qs -c MacShell ipc call spotlight clipboard"))
 hl.bind(mainMod .. " + PERIOD", hl.dsp.exec_cmd("qs -c MacShell ipc call spotlight emoji"))
 hl.bind(mainMod .. " + Z",      hl.dsp.exec_cmd("qs -c MacShell ipc call settings toggle"))
 hl.bind(mainMod .. " + W",      hl.dsp.window.close())
 hl.bind(mainMod .. " + Q",      hl.dsp.window.close())
 hl.bind(mainMod .. " + E",      hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. " + Tab",    hl.dsp.exec_cmd("rofi -show window"))
+hl.bind("ALT + Tab",            hl.dsp.exec_cmd("qs -c MacShell ipc call switcher next"))
+hl.bind(mainMod .. " + Tab",    hl.dsp.exec_cmd("qs -c MacShell ipc call switcher next"))
 hl.bind(mainMod .. " + D",      hl.dsp.exec_cmd("hyprctl dispatch togglespecialworkspace"))
 hl.bind(mainMod .. " + L",      hl.dsp.exec_cmd("/usr/local/bin/maclock"))
 hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd("/usr/local/bin/enerco-mterp"))
 hl.bind(mainMod .. " + I",      hl.dsp.exec_cmd("/usr/local/bin/enerco-installer"))
 hl.bind(mainMod .. " + M",      hl.dsp.exit())
-hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + SHIFT + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + J",      hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
 hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("/usr/local/bin/macshell-start &"))
@@ -237,6 +239,12 @@ hl.layer_rule({
     match        = { namespace = "macspot" },
     blur         = true,
     ignore_alpha = 0.05,
+})
+
+hl.layer_rule({
+    name         = "macwindecor",
+    match        = { namespace = "macwindecor" },
+    no_anim      = true,
 })
 
 hl.layer_rule({

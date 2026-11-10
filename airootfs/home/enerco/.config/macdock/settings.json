@@ -1,0 +1,17 @@
+{
+  "dockStyle": "blur",
+  "appearanceMode": "dark",
+  "wallpaperPath": "/usr/share/backgrounds/enerco-mac.png",
+  "bounceOnLaunch": true,
+  "magnification": 1.6,
+  "magnificationEnabled": true,
+  "hideMode": "smart",
+  "accent": "#0071e3",
+  "fontFamily": "Open Runde",
+  "iconSize": 52,
+  "spacing": 6,
+  "margin": 6,
+  "cornerRadius": 18,
+  "showTrash": true,
+  "showIndicators": true
+}

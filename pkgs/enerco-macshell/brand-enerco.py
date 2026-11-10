@@ -125,6 +125,7 @@ def brand_macshell_dir(ms_dir: str, logo_svg: str) -> None:
                                     mipmap: true
                                 }"""
         txt = txt.replace(old_fallback_block, new_fallback_block)
+        txt = txt.replace('I18n.tr("Spotlight Search")', 'I18n.tr("Enerco Search")')
         open(bar_path, "w", encoding="utf-8").write(txt)
 
     # 4. Brand MacDock.qml
@@ -164,6 +165,50 @@ def brand_macshell_dir(ms_dir: str, logo_svg: str) -> None:
         txt = txt.replace('name: own ? "MacShell"', 'name: own ? "EnercoOS"')
         txt = txt.replace('name: own3 ? (tl.title || "MacShell")', 'name: own3 ? (tl.title || "EnercoOS")')
         open(dock_path, "w", encoding="utf-8").write(txt)
+
+    # 5. Enable WindowDecor in shell.qml for macOS traffic lights & window frames on every window
+    shell_path = os.path.join(ms_dir, "shell.qml")
+    if os.path.isfile(shell_path):
+        txt = open(shell_path, "r", encoding="utf-8").read()
+        if "WindowDecor {" not in txt:
+            # 1. Add decor and decorWantsGeo properties to sharedHub
+            txt = txt.replace(
+                "property var about: aboutApp\n",
+                "property var about: aboutApp\n        property var decor: windowDecor\n",
+            )
+            txt = txt.replace(
+                "property bool dockWantsGeo: false\n",
+                "property bool dockWantsGeo: false\n        property bool decorWantsGeo: false\n",
+            )
+            # 2. Add decorWantsGeo to geo query timers
+            txt = txt.replace(
+                "(sharedHub.barWantsGeo || sharedHub.dockWantsGeo)",
+                "(sharedHub.barWantsGeo || sharedHub.dockWantsGeo || sharedHub.decorWantsGeo)",
+            )
+            # 3. Instantiate WindowDecor
+            txt = txt.replace(
+                "AboutApp { id: aboutApp; hub: sharedHub }\n",
+                "AboutApp { id: aboutApp; hub: sharedHub }\n    WindowDecor { id: windowDecor; hub: sharedHub }\n",
+            )
+            # 4. Attach decor to sharedHub in Component.onCompleted
+            txt = txt.replace(
+                "sharedHub.desktop = desktopIcons;\n",
+                "sharedHub.desktop = desktopIcons;\n        sharedHub.decor = windowDecor;\n",
+            )
+            # 5. Add windecor IPC handler
+            windecor_ipc = """    // qs -c MacShell ipc call windecor toggle | on | off
+    IpcHandler {
+        target: "windecor"
+        function toggle(): void { windowDecor.enabled = !windowDecor.enabled; }
+        function on(): void { windowDecor.enabled = true; }
+        function off(): void { windowDecor.enabled = false; }
+    }
+"""
+            txt = txt.replace(
+                "    IpcHandler {\n        target: \"settings\"\n",
+                windecor_ipc + "    IpcHandler {\n        target: \"settings\"\n",
+            )
+            open(shell_path, "w", encoding="utf-8").write(txt)
 
 
 if __name__ == "__main__":
