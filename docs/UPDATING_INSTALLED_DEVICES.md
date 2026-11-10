@@ -126,3 +126,4 @@ setsid /usr/local/bin/macshell-start >/dev/null 2>&1 &
 - Open **Kitty Terminal** (`Super + Return`): Notice the macOS titlebar with red, amber, and green traffic lights at the top.
 - Click the red light to close, amber to minimize, green to maximize/fullscreen.
 - Drag the titlebar to move the window; double-click the titlebar to maximize or restore.
+
