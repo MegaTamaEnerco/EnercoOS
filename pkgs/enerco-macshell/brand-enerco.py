@@ -49,6 +49,54 @@ def brand_macshell_dir(ms_dir: str, logo_svg: str) -> None:
             'text: "Linux® is a registered trademark of Linus Torvalds.\\nMacShell 0.5.1"',
             'text: "PT Mega Tama Enerco · Enterprise Workstation\\norg.megatama-enerco.com"',
         )
+        old_more_block = """                Item {
+                    width: parent.width; height: 24
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: moreTxt.implicitWidth + 30; height: 24; radius: 7
+                        color: moreMa.pressed ? pal.btnDown : pal.btn
+                        border.width: 1; border.color: pal.border
+                        Text { id: moreTxt; anchors.centerIn: parent; text: I18n.tr("More Info\\u2026"); color: pal.text; font.family: root.fontForWeight(Font.Normal, root.fam); font.pixelSize: 12 }
+                        MouseArea {
+                            id: moreMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                var cmd = (root.bar ? root.bar.terminal : "kitty") + " -e sh -c 'fastfetch || neofetch; echo; read -p \\\"Press Enter\\\" _'";
+                                Quickshell.execDetached(["sh", "-c", cmd]);
+                            }
+                        }
+                    }
+                }"""
+        new_more_block = """                Item {
+                    width: parent.width; height: 24
+                    Row {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        spacing: 8
+                        Rectangle {
+                            width: updateTxt.implicitWidth + 20; height: 24; radius: 7
+                            color: updateMa.pressed ? pal.btnDown : pal.btn
+                            border.width: 1; border.color: pal.border
+                            Text { id: updateTxt; anchors.centerIn: parent; text: I18n.tr("Software Update\\u2026"); color: pal.text; font.family: root.fontForWeight(Font.Normal, root.fam); font.pixelSize: 12 }
+                            MouseArea {
+                                id: updateMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: Quickshell.execDetached(["/usr/local/bin/enerco-update"])
+                            }
+                        }
+                        Rectangle {
+                            width: moreTxt.implicitWidth + 20; height: 24; radius: 7
+                            color: moreMa.pressed ? pal.btnDown : pal.btn
+                            border.width: 1; border.color: pal.border
+                            Text { id: moreTxt; anchors.centerIn: parent; text: I18n.tr("More Info\\u2026"); color: pal.text; font.family: root.fontForWeight(Font.Normal, root.fam); font.pixelSize: 12 }
+                            MouseArea {
+                                id: moreMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    var cmd = (root.bar ? root.bar.terminal : "kitty") + " -e sh -c 'fastfetch || neofetch; echo; read -p \\\"Press Enter\\\" _'";
+                                    Quickshell.execDetached(["sh", "-c", cmd]);
+                                }
+                            }
+                        }
+                    }
+                }"""
+        txt = txt.replace(old_more_block, new_more_block)
         open(about_path, "w", encoding="utf-8").write(txt)
 
     # 3. Brand MacBar.qml
@@ -68,6 +116,22 @@ def brand_macshell_dir(ms_dir: str, logo_svg: str) -> None:
             'property string updateUrl: "https://github.com/0-ss/MacShell/releases/latest"',
             'property string updateUrl: "https://org.megatama-enerco.com"',
         )
+        txt = txt.replace(
+            'function openUpdateLink() { Quickshell.execDetached(["xdg-open", updateUrl]); }',
+            'function openUpdateLink() { Quickshell.execDetached(["/usr/local/bin/enerco-update"]); }',
+        )
+        old_apple_about = """            m.push(ico(mi("About This Linux", "", function () {
+                if (hub && hub.about) hub.about.open();
+                else sh(terminal + " -e sh -c 'fastfetch || neofetch; echo; read -p \\\"Press Enter\\\" _'");
+            }), "m_about"));"""
+        new_apple_about = """            m.push(ico(mi("About EnercoOS", "", function () {
+                if (hub && hub.about) hub.about.open();
+                else sh(terminal + " -e sh -c 'fastfetch || neofetch; echo; read -p \\\"Press Enter\\\" _'");
+            }), "m_about"));
+            m.push(ico(mi("Software Update\\u2026", "", function () {
+                Quickshell.execDetached(["/usr/local/bin/enerco-update"]);
+            }), "system-software-update"));"""
+        txt = txt.replace(old_apple_about, new_apple_about)
         txt = txt.replace('mi("About This Linux"', 'mi("About EnercoOS"')
         txt = txt.replace(
             'm.push(mi("Hyprland Keybinds", "", function () { Quickshell.execDetached(["xdg-open", "https://github.com/0-ss/MacShell#hyprland-configuration-lua"]); }));',

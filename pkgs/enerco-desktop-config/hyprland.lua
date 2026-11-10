@@ -306,3 +306,12 @@ hl.window_rule({
     float  = true,
     center = true,
 })
+
+hl.window_rule({
+    name   = "float-software-update",
+    match  = { title = "Software Update" },
+    float  = true,
+    size   = "560 380",
+    center = true,
+})
+

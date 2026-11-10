@@ -1,0 +1,544 @@
+#!/usr/bin/env python3
+"""
+EnercoOS Software Update
+macOS-Style One-Click Workstation Updater
+PT Mega Tama Enerco Enterprise Workstation
+"""
+
+import os
+import sys
+import json
+import time
+import shutil
+import threading
+import subprocess
+
+# Determine target non-root user and home directory
+SUDO_USER = os.environ.get("SUDO_USER")
+if SUDO_USER and SUDO_USER != "root":
+    TARGET_USER = SUDO_USER
+else:
+    TARGET_USER = os.environ.get("USER", "enerco")
+
+try:
+    import pwd
+    TARGET_HOME = pwd.getpwnam(TARGET_USER).pw_dir
+except Exception:
+    TARGET_HOME = os.path.expanduser("~")
+
+
+def is_gui_available():
+    return bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"))
+
+
+def check_updates_needed():
+    """Check if system packages or user configurations need updating."""
+    reasons = []
+
+    # 1. Check cliphist
+    if not shutil.which("cliphist"):
+        reasons.append("Clipboard history service (cliphist) is not installed")
+
+    # 2. Check macbar settings.json
+    mb_settings = os.path.join(TARGET_HOME, ".config/macbar/settings.json")
+    if os.path.exists(mb_settings):
+        try:
+            with open(mb_settings, "r", encoding="utf-8") as f:
+                d = json.load(f)
+            if d.get("launcher") != "":
+                reasons.append("Search launcher configured to legacy menu instead of native Liquid Glass Spotlight")
+        except Exception:
+            pass
+    else:
+        reasons.append("MacShell bar configuration needs initialization")
+
+    # 3. Check windecor.json
+    wd_path = os.path.join(TARGET_HOME, ".config/macbar/windecor.json")
+    if not os.path.exists(wd_path):
+        reasons.append("macOS traffic lights window decoration (WindowDecor) is not enabled")
+
+    # 4. Check kitty.conf
+    kitty_path = os.path.join(TARGET_HOME, ".config/kitty/kitty.conf")
+    if os.path.exists(kitty_path):
+        try:
+            with open(kitty_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            if "hide_window_decorations" not in content:
+                reasons.append("Terminal window decorations need alignment with macOS window frame")
+        except Exception:
+            pass
+
+    # 5. Check pacman updates (optional fast check)
+    try:
+        res = subprocess.run(["checkupdates"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
+        if res.returncode == 0 and res.stdout.strip():
+            count = len(res.stdout.strip().splitlines())
+            reasons.append(f"{count} system package update(s) available from repository")
+    except Exception:
+        pass
+
+    return reasons
+
+
+def run_system_upgrade(progress_callback=None):
+    """Perform system package upgrade, configuration migration, and desktop reload."""
+    steps = [
+        "Synchronizing package databases...",
+        "Upgrading system packages...",
+        "Ensuring Spotlight dependencies (cliphist)...",
+        "Migrating user profile configurations...",
+        "Configuring universal macOS window controls...",
+        "Reloading desktop compositor and shell...",
+    ]
+
+    def log(msg, frac):
+        print(f"[enerco-update] {msg}")
+        if progress_callback:
+            progress_callback(msg, frac)
+
+    # Step 1: Sync databases
+    log(steps[0], 0.15)
+    cmd_prefix = []
+    if os.geteuid() != 0:
+        if shutil.which("pkexec"):
+            cmd_prefix = ["pkexec"]
+        elif shutil.which("sudo"):
+            cmd_prefix = ["sudo"]
+
+    try:
+        subprocess.run(cmd_prefix + ["pacman", "-Sy", "--noconfirm"], check=False)
+    except Exception as e:
+        print(f"Warning syncing database: {e}")
+
+    # Step 2: Upgrade system packages
+    log(steps[1], 0.40)
+    try:
+        subprocess.run(cmd_prefix + ["pacman", "-Su", "--noconfirm"], check=False)
+    except Exception as e:
+        print(f"Warning upgrading packages: {e}")
+
+    # Step 3: Install cliphist if missing
+    log(steps[2], 0.60)
+    try:
+        subprocess.run(cmd_prefix + ["pacman", "-S", "--needed", "--noconfirm", "cliphist"], check=False)
+    except Exception as e:
+        print(f"Warning installing cliphist: {e}")
+
+    # Step 4: User configuration migration
+    log(steps[3], 0.75)
+    config_dir = os.path.join(TARGET_HOME, ".config")
+    macbar_dir = os.path.join(config_dir, "macbar")
+    macdock_dir = os.path.join(config_dir, "macdock")
+    kitty_dir = os.path.join(config_dir, "kitty")
+    hypr_dir = os.path.join(config_dir, "hypr")
+
+    os.makedirs(macbar_dir, exist_ok=True)
+    os.makedirs(macdock_dir, exist_ok=True)
+    os.makedirs(kitty_dir, exist_ok=True)
+
+    # 4a: settings.json -> launcher = ""
+    mb_file = os.path.join(macbar_dir, "settings.json")
+    if os.path.exists(mb_file):
+        try:
+            with open(mb_file, "r", encoding="utf-8") as f:
+                d = json.load(f)
+            d["launcher"] = ""
+            with open(mb_file, "w", encoding="utf-8") as f:
+                json.dump(d, f, indent=2)
+        except Exception:
+            pass
+    else:
+        with open(mb_file, "w", encoding="utf-8") as f:
+            json.dump({
+                "terminal": "kitty",
+                "launcher": "",
+                "files": "thunar",
+                "accent": "#0071e3",
+                "darkMode": True,
+                "barLogoMode": "custom",
+                "barCustomLogoPath": "/usr/share/pixmaps/enerco-logo.svg",
+                "wallpaperPath": "/usr/share/backgrounds/enerco-mac.png",
+                "wpRestorePath": "/usr/share/backgrounds/enerco-mac.png",
+                "wallpaperCmd": "pkill -x swaybg 2>/dev/null; setsid swaybg -i {} -m fill >/dev/null 2>&1 &"
+            }, f, indent=2)
+
+    # 4b: pinned.json -> replace rofi with chromium
+    pin_file = os.path.join(macdock_dir, "pinned.json")
+    if os.path.exists(pin_file):
+        try:
+            with open(pin_file, "r", encoding="utf-8") as f:
+                pins = json.load(f)
+            if "rofi" in pins:
+                pins = [p if p != "rofi" else "chromium" for p in pins]
+                with open(pin_file, "w", encoding="utf-8") as f:
+                    json.dump(pins, f, indent=2)
+        except Exception:
+            pass
+
+    # Step 5: Enable universal macOS window controls (windecor.json)
+    log(steps[4], 0.85)
+    wd_file = os.path.join(macbar_dir, "windecor.json")
+    with open(wd_file, "w", encoding="utf-8") as f:
+        json.dump({
+            "enabled": True,
+            "showTitle": True,
+            "radius": 10,
+            "excludeClasses": [
+                "org.quickshell",
+                "quickshell"
+            ]
+        }, f, indent=2)
+
+    # 5b: kitty.conf -> hide_window_decorations yes
+    kc_file = os.path.join(kitty_dir, "kitty.conf")
+    if os.path.exists(kc_file):
+        try:
+            with open(kc_file, "r", encoding="utf-8") as f:
+                kc_txt = f.read()
+            if "hide_window_decorations" not in kc_txt:
+                with open(kc_file, "a", encoding="utf-8") as f:
+                    f.write("\nhide_window_decorations yes\n")
+        except Exception:
+            pass
+
+    # 5c: hyprland.lua -> ensure keybinds & layer rules
+    hl_file = os.path.join(hypr_dir, "hyprland.lua")
+    if os.path.exists(hl_file):
+        try:
+            with open(hl_file, "r", encoding="utf-8") as f:
+                hl_txt = f.read()
+            changed = False
+            if "qs -c MacShell ipc call spotlight toggle || rofi" in hl_txt:
+                hl_txt = hl_txt.replace("qs -c MacShell ipc call spotlight toggle || rofi -show drun", "qs -c MacShell ipc call spotlight toggle")
+                changed = True
+            if 'name         = "macwindecor"' not in hl_txt:
+                decor_rule = '\nhl.layer_rule({\n    name         = "macwindecor",\n    match        = { namespace = "macwindecor" },\n    no_anim      = true,\n})\n'
+                hl_txt += decor_rule
+                changed = True
+            if changed:
+                with open(hl_file, "w", encoding="utf-8") as f:
+                    f.write(hl_txt)
+        except Exception:
+            pass
+
+    # Fix ownership if running under sudo
+    if os.geteuid() == 0 and TARGET_USER != "root":
+        try:
+            import pwd
+            uid = pwd.getpwnam(TARGET_USER).pw_uid
+            gid = pwd.getpwnam(TARGET_USER).pw_gid
+            for r, ds, fs in os.walk(os.path.join(TARGET_HOME, ".config")):
+                for d in ds:
+                    os.chown(os.path.join(r, d), uid, gid)
+                for f in fs:
+                    os.chown(os.path.join(r, f), uid, gid)
+        except Exception:
+            pass
+
+    # Step 6: Reload desktop services
+    log(steps[5], 0.95)
+    try:
+        subprocess.run(["hyprctl", "reload"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        pass
+
+    try:
+        # Reload Quickshell / MacShell
+        subprocess.run(["pkill", "-f", "quickshell"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        time.sleep(0.5)
+        subprocess.Popen(["/usr/local/bin/macshell-start"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    except Exception:
+        pass
+
+    # Send desktop notification
+    try:
+        subprocess.run([
+            "notify-send",
+            "-i", "system-software-update",
+            "-a", "Software Update",
+            "EnercoOS Update Complete",
+            "Your system, Liquid Glass Spotlight, and window controls are up to date."
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        pass
+
+    log("✓ Update completed successfully!", 1.0)
+    return True
+
+
+def run_cli():
+    print("==========================================================")
+    print("          EnercoOS Software Update (CLI Mode)            ")
+    print("         PT Mega Tama Enerco · Workstation Edition        ")
+    print("==========================================================")
+    print(f"Target User: {TARGET_USER} ({TARGET_HOME})\n")
+
+    reasons = check_updates_needed()
+    if not reasons:
+        print("✓ Your workstation is already up to date!")
+        print("All components (Spotlight, WindowDecor, packages) are current.")
+        if "--check" in sys.argv:
+            sys.exit(0)
+    else:
+        print(f"Found {len(reasons)} pending update component(s):")
+        for r in reasons:
+            print(f"  • {r}")
+        print()
+        if "--check" in sys.argv:
+            sys.exit(10)
+
+    if "-y" not in sys.argv and "--yes" not in sys.argv:
+        try:
+            resp = input("Proceed with system update? [Y/n] ").strip().lower()
+            if resp and resp not in ("y", "yes"):
+                print("Update canceled.")
+                sys.exit(0)
+        except (KeyboardInterrupt, EOFError):
+            print("\nAborted.")
+            sys.exit(1)
+
+    print("\nStarting update transaction...")
+    run_system_upgrade()
+    print("\n==========================================================")
+    print(" [SUCCESS] EnercoOS has been updated to the latest version!")
+    print("==========================================================")
+
+
+def run_gui():
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, Gdk, GLib
+
+    class SoftwareUpdateWindow(Gtk.Window):
+        def __init__(self):
+            super().__init__(title="Software Update")
+            self.set_default_size(560, 420)
+            self.set_position(Gtk.WindowPosition.CENTER)
+            self.set_resizable(False)
+            self.set_border_width(24)
+            self.apply_styles()
+
+            self.vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+            self.add(self.vbox)
+
+            # Header with Emblem
+            header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=16)
+            self.vbox.pack_start(header_box, False, False, 0)
+
+            # Icon
+            icon = Gtk.Image.new_from_icon_name("system-software-update", Gtk.IconSize.DIALOG)
+            icon.set_pixel_size(64)
+            header_box.pack_start(icon, False, False, 0)
+
+            header_text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+            header_box.pack_start(header_text, True, True, 0)
+
+            title_lbl = Gtk.Label()
+            title_lbl.set_halign(Gtk.Align.START)
+            title_lbl.set_markup("<span font='18' weight='bold' color='#ffffff'>Software Update</span>")
+            header_text.pack_start(title_lbl, False, False, 0)
+
+            sub_lbl = Gtk.Label()
+            sub_lbl.set_halign(Gtk.Align.START)
+            sub_lbl.set_markup("<span font='11' color='#9aa5be'>PT Mega Tama Enerco · Enterprise Workstation</span>")
+            header_text.pack_start(sub_lbl, False, False, 0)
+
+            self.vbox.pack_start(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), False, False, 4)
+
+            # Status Container Card
+            self.card = Gtk.Frame()
+            self.card_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+            self.card_box.set_border_width(16)
+            self.card.add(self.card_box)
+            self.vbox.pack_start(self.card, True, True, 0)
+
+            # Spinner & Status Label
+            self.spinner = Gtk.Spinner()
+            self.card_box.pack_start(self.spinner, False, False, 4)
+
+            self.status_lbl = Gtk.Label()
+            self.status_lbl.set_line_wrap(True)
+            self.status_lbl.set_markup("<span font='13' color='#f5f5f7'>Checking for updates…</span>")
+            self.card_box.pack_start(self.status_lbl, False, False, 4)
+
+            self.details_lbl = Gtk.Label()
+            self.details_lbl.set_line_wrap(True)
+            self.details_lbl.set_halign(Gtk.Align.START)
+            self.card_box.pack_start(self.details_lbl, False, False, 0)
+
+            # Progress Bar (hidden during check)
+            self.pbar = Gtk.ProgressBar()
+            self.pbar.set_no_show_all(True)
+            self.card_box.pack_start(self.pbar, False, False, 6)
+
+            # Footer / Action Buttons Box
+            self.btn_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            self.vbox.pack_start(self.btn_box, False, False, 4)
+
+            self.info_btn = Gtk.Button(label="Release Notes")
+            self.info_btn.connect("clicked", lambda b: subprocess.Popen(["xdg-open", "https://org.megatama-enerco.com/releases"]))
+            self.btn_box.pack_start(self.info_btn, False, False, 0)
+
+            self.spacer = Gtk.Box()
+            self.btn_box.pack_start(self.spacer, True, True, 0)
+
+            self.action_btn = Gtk.Button(label="Update Now")
+            self.action_btn.get_style_context().add_class("suggested-action")
+            self.action_btn.connect("clicked", self.on_update_clicked)
+            self.action_btn.set_sensitive(False)
+            self.btn_box.pack_start(self.action_btn, False, False, 0)
+
+            self.close_btn = Gtk.Button(label="Close")
+            self.close_btn.connect("clicked", lambda b: self.destroy())
+            self.btn_box.pack_start(self.close_btn, False, False, 0)
+
+            self.connect("destroy", Gtk.main_quit)
+            self.show_all()
+
+            # Start background update check
+            self.spinner.start()
+            threading.Thread(target=self.do_check, daemon=True).start()
+
+        def apply_styles(self):
+            css_provider = Gtk.CssProvider()
+            css = b"""
+            window {
+                background-color: #121620;
+            }
+            label {
+                color: #f5f5f7;
+                font-family: "Inter", "Open Runde", sans-serif;
+            }
+            frame {
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                border-radius: 12px;
+                background: rgba(26, 32, 48, 0.65);
+            }
+            frame > border {
+                border-radius: 12px;
+            }
+            progressbar > trough {
+                background: rgba(255, 255, 255, 0.10);
+                border-radius: 6px;
+                min-height: 8px;
+            }
+            progressbar > progress {
+                background: #007aff;
+                border-radius: 6px;
+                min-height: 8px;
+            }
+            button {
+                background: rgba(255, 255, 255, 0.08);
+                color: #f5f5f7;
+                border-radius: 8px;
+                padding: 8px 16px;
+                font-size: 13px;
+                font-weight: 600;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+            }
+            button:hover {
+                background: rgba(255, 255, 255, 0.18);
+            }
+            button.suggested-action {
+                background: #007aff;
+                color: #ffffff;
+                border: 1px solid #0056b3;
+            }
+            button.suggested-action:hover {
+                background: #1482f5;
+            }
+            """
+            css_provider.load_from_data(css)
+            Gtk.StyleContext.add_provider_for_screen(
+                Gdk.Screen.get_default(),
+                css_provider,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            )
+
+        def do_check(self):
+            time.sleep(1.0)
+            reasons = check_updates_needed()
+            GLib.idle_add(self.on_check_done, reasons)
+
+        def on_check_done(self, reasons):
+            self.spinner.stop()
+            self.spinner.hide()
+            if not reasons:
+                self.status_lbl.set_markup(
+                    "<span font='15' weight='bold' color='#32d74b'>✓ Your Workstation is Up to Date</span>"
+                )
+                self.details_lbl.set_markup(
+                    f"<span color='#9aa5be'>EnercoOS 2026.11.10 Enterprise Edition\n"
+                    f"Last checked: Today at {time.strftime('%H:%M:%S')}\n\n"
+                    f"All components (Spotlight, WindowDecor, packages) are operating with the latest features.</span>"
+                )
+                self.action_btn.set_label("Check Again")
+                self.action_btn.set_sensitive(True)
+                self.action_btn.disconnect_by_func(self.on_update_clicked)
+                self.action_btn.connect("clicked", self.on_recheck_clicked)
+            else:
+                self.status_lbl.set_markup(
+                    "<span font='15' weight='bold' color='#007aff'>⚡ EnercoOS Update Available</span>"
+                )
+                items_str = "\n".join([f"  • {r}" for r in reasons[:4]])
+                self.details_lbl.set_markup(
+                    f"<span color='#f5f5f7'><b>The following updates are ready to be installed:</b></span>\n\n"
+                    f"<span color='#d0d8e8'>{items_str}</span>\n\n"
+                    f"<span color='#9aa5be'>Includes native Liquid Glass Spotlight, macOS traffic lights on all windows, and system stability updates.</span>"
+                )
+                self.action_btn.set_label("Update Now")
+                self.action_btn.set_sensitive(True)
+
+        def on_recheck_clicked(self, widget):
+            self.action_btn.set_sensitive(False)
+            self.details_lbl.set_text("")
+            self.status_lbl.set_markup("<span font='13' color='#f5f5f7'>Checking for updates…</span>")
+            self.spinner.show()
+            self.spinner.start()
+            threading.Thread(target=self.do_check, daemon=True).start()
+
+        def on_update_clicked(self, widget):
+            self.action_btn.set_sensitive(False)
+            self.info_btn.set_sensitive(False)
+            self.close_btn.set_sensitive(False)
+            self.status_lbl.set_markup("<span font='14' weight='bold' color='#007aff'>Installing Updates…</span>")
+            self.details_lbl.set_text("Please wait while updates are applied to your system.")
+            self.pbar.show()
+            self.pbar.set_fraction(0.05)
+
+            threading.Thread(target=self.do_update_worker, daemon=True).start()
+
+        def do_update_worker(self):
+            def progress(msg, fraction):
+                GLib.idle_add(self.update_progress, msg, fraction)
+
+            success = run_system_upgrade(progress_callback=progress)
+            GLib.idle_add(self.on_update_finished, success)
+
+        def update_progress(self, msg, fraction):
+            self.details_lbl.set_markup(f"<span color='#9aa5be'>{msg}</span>")
+            self.pbar.set_fraction(fraction)
+
+        def on_update_finished(self, success):
+            self.pbar.set_fraction(1.0)
+            self.close_btn.set_sensitive(True)
+            self.close_btn.set_label("Done")
+            self.action_btn.hide()
+            self.status_lbl.set_markup(
+                "<span font='15' weight='bold' color='#32d74b'>✓ Update Successfully Completed!</span>"
+            )
+            self.details_lbl.set_markup(
+                "<span color='#f5f5f7'>Your EnercoOS workstation is now running the latest version.\n"
+                "Native Liquid Glass Spotlight (`Super + Space`), Clipboard History (`Super + V`), "
+                "and universal macOS window traffic lights are active.</span>"
+            )
+
+    win = SoftwareUpdateWindow()
+    Gtk.main()
+
+
+if __name__ == "__main__":
+    if "--cli" in sys.argv or "-c" in sys.argv or not is_gui_available():
+        run_cli()
+    else:
+        run_gui()

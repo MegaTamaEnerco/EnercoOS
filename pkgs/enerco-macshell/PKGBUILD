@@ -1,7 +1,7 @@
 # Maintainer: PT Mega Tama Enerco <devops@megatama-enerco.com>
 pkgname=enerco-macshell
 pkgver=1.0.0
-pkgrel=6
+pkgrel=7
 pkgdesc="EnercoOS Liquid Glass Desktop Shell (MacShell + MacLock)"
 arch=('any')
 url="https://org.megatama-enerco.com"

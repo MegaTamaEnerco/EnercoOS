@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# EnercoOS Calamares Invocation Wrapper
+# Ensures UnpackFS source is always prepared prior to Calamares execution
+# ==============================================================================
+
+set -e
+
+if [[ -x /usr/local/bin/enerco-prepare-unpackfs ]]; then
+    if [[ $EUID -eq 0 ]]; then
+        /usr/local/bin/enerco-prepare-unpackfs || true
+    elif command -v sudo >/dev/null 2>&1; then
+        sudo /usr/local/bin/enerco-prepare-unpackfs || true
+    fi
+fi
+
+exec /usr/bin/calamares "$@"

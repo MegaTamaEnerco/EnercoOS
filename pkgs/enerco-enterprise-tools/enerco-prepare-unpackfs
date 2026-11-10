@@ -2,16 +2,28 @@
 # ==============================================================================
 # EnercoOS Calamares UnpackFS Source Resolver
 # Guarantees that /run/archiso/bootmnt/arch/x86_64/airootfs.sfs and vmlinuz-linux
-# exist across USB, Ventoy, copytoram, and virtual machine boot environments.
+# exist across USB (dd), Ventoy (ISO loopback), Rufus, copytoram, and VM boots.
 # ==============================================================================
 
-set -euo pipefail
+set -uo pipefail
 
+LOG_FILE="/var/log/enerco-prepare-unpackfs.log"
 TARGET_SFS="/run/archiso/bootmnt/arch/x86_64/airootfs.sfs"
 TARGET_KERNEL="/run/archiso/bootmnt/arch/boot/x86_64/vmlinuz-linux"
 CONF_FILE="/etc/calamares/modules/unpackfs.conf"
 
+log() {
+    local msg="[$(date '+%Y-%m-%d %H:%M:%S')] $*"
+    echo "${msg}"
+    mkdir -p "$(dirname "${LOG_FILE}")" 2>/dev/null || true
+    echo "${msg}" >> "${LOG_FILE}" 2>/dev/null || true
+    echo "${msg}" >> /tmp/enerco-prepare-unpackfs.log 2>/dev/null || true
+}
+
+log "Starting EnercoOS Calamares UnpackFS Source Resolver..."
+
 ensure_kernel() {
+    log "Ensuring target kernel exists at ${TARGET_KERNEL}..."
     if [[ ! -f "${TARGET_KERNEL}" ]]; then
         mkdir -p "$(dirname "${TARGET_KERNEL}")"
         local k=""
@@ -31,96 +43,223 @@ ensure_kernel() {
         fi
         if [[ -n "${k}" ]]; then
             cp -f "${k}" "${TARGET_KERNEL}" 2>/dev/null || ln -sf "${k}" "${TARGET_KERNEL}" 2>/dev/null || true
+            log "Kernel successfully provisioned to ${TARGET_KERNEL} from ${k}"
+        else
+            log "Warning: No kernel candidate located on live filesystem"
         fi
+    else
+        log "Kernel already present at ${TARGET_KERNEL}"
+    fi
+
+    # Also guarantee /boot/vmlinuz-linux exists locally
+    if [[ ! -f "/boot/vmlinuz-linux" ]]; then
+        for candidate in /usr/lib/modules/*/vmlinuz /run/archiso/bootmnt/arch/boot/x86_64/vmlinuz-linux; do
+            if [[ -f "${candidate}" && ! "${candidate}" =~ zen ]]; then
+                mkdir -p /boot
+                cp -f "${candidate}" /boot/vmlinuz-linux 2>/dev/null || ln -sf "${candidate}" /boot/vmlinuz-linux 2>/dev/null || true
+                break
+            fi
+        done
     fi
 }
 
-# If both target sfs and kernel exist, nothing more needed
-if [[ -f "${TARGET_SFS}" ]]; then
-    ensure_kernel
-    exit 0
-fi
-
-# Step 1: If /run/archiso/bootmnt is not mounted, attempt mounting boot media
-if ! mountpoint -q /run/archiso/bootmnt 2>/dev/null; then
-    mkdir -p /run/archiso/bootmnt
-
-    for dev in /dev/disk/by-label/ENERCO_* /dev/disk/by-label/*arch* /dev/disk/by-label/*ARCH* /dev/disk/by-label/*Ventoy* /dev/disk/by-label/*VENTOY*; do
-        if [[ -e "${dev}" ]]; then
-            mount -o ro "${dev}" /run/archiso/bootmnt 2>/dev/null && break
-        fi
-    done
-
-    if ! mountpoint -q /run/archiso/bootmnt 2>/dev/null; then
-        while read -r bdev; do
-            if [[ -b "${bdev}" ]]; then
-                mount -o ro "${bdev}" /run/archiso/bootmnt 2>/dev/null && break
-            fi
-        done < <(blkid -t TYPE=iso9660 -o device 2>/dev/null || true)
-    fi
-fi
-
-if [[ -f "${TARGET_SFS}" ]]; then
-    ensure_kernel
-    exit 0
-fi
-
-# Step 2: Search for airootfs.sfs in copytoram or alternate live mounts
-FOUND_SFS=""
-for candidate in \
-    /run/archiso/copytoram/airootfs.sfs \
-    /run/archiso/copytoram/*/airootfs.sfs \
-    /run/archiso/airootfs/airootfs.sfs \
-    /run/initramfs/live/arch/x86_64/airootfs.sfs \
-    /run/initramfs/live/airootfs.sfs; do
-    if [[ -f "${candidate}" ]]; then
-        FOUND_SFS="${candidate}"
-        break
-    fi
-done
-
-if [[ -z "${FOUND_SFS}" ]]; then
-    FOUND_SFS="$(find /run /mnt /media -maxdepth 6 -name "airootfs.sfs" 2>/dev/null | head -n 1 || true)"
-fi
-
-if [[ -n "${FOUND_SFS}" ]]; then
-    mkdir -p "$(dirname "${TARGET_SFS}")"
-    ln -sf "${FOUND_SFS}" "${TARGET_SFS}"
-    ensure_kernel
+update_unpackfs() {
+    local src="$1"
+    local krnl="$2"
+    local sfs_type="${3:-squashfs}"
 
     if [[ -f "${CONF_FILE}" ]]; then
         cat <<EOF > "${CONF_FILE}"
 ---
 unpack:
-    - source: "${FOUND_SFS}"
-      sourcefs: "squashfs"
+    - source: "${src}"
+      sourcefs: "${sfs_type}"
       destination: ""
-    - source: "${TARGET_KERNEL}"
+    - source: "${krnl}"
       sourcefs: "file"
       destination: "/boot/vmlinuz-linux"
       weight: 1
 EOF
+        log "Updated ${CONF_FILE}: source=${src} (${sfs_type}), kernel=${krnl}"
     fi
+}
+
+# ------------------------------------------------------------------------------
+# Check 1: Target SFS already exists and is readable
+# ------------------------------------------------------------------------------
+if [[ -f "${TARGET_SFS}" ]]; then
+    log "Target SFS is already present at ${TARGET_SFS}"
+    ensure_kernel
+    update_unpackfs "${TARGET_SFS}" "${TARGET_KERNEL}" "squashfs"
+    log "UnpackFS resolution complete (Existing target)."
     exit 0
 fi
 
-# Step 3: Probe unmounted block devices for ISO with arch/x86_64/airootfs.sfs
-for bdev in $(lsblk -dpno NAME 2>/dev/null); do
-    if [[ -b "${bdev}" ]] && ! mountpoint -q "${bdev}" 2>/dev/null; then
-        mkdir -p /tmp/enerco-probe
-        if mount -o ro "${bdev}" /tmp/enerco-probe 2>/dev/null; then
-            if [[ -f "/tmp/enerco-probe/arch/x86_64/airootfs.sfs" ]]; then
-                umount /tmp/enerco-probe 2>/dev/null || true
-                mount -o ro "${bdev}" /run/archiso/bootmnt 2>/dev/null || true
-                ensure_kernel
-                rmdir /tmp/enerco-probe 2>/dev/null || true
-                exit 0
-            fi
-            umount /tmp/enerco-probe 2>/dev/null || true
-        fi
-        rmdir /tmp/enerco-probe 2>/dev/null || true
+# ------------------------------------------------------------------------------
+# Check 2: Inspect active loop devices via losetup
+# ------------------------------------------------------------------------------
+log "Checking active loop devices for airootfs.sfs..."
+while read -r bfile; do
+    if [[ -n "${bfile}" && -f "${bfile}" && "${bfile}" == *"airootfs.sfs"* ]]; then
+        log "Found active loop backing file: ${bfile}"
+        mkdir -p "$(dirname "${TARGET_SFS}")"
+        ln -sf "${bfile}" "${TARGET_SFS}" 2>/dev/null || cp -sf "${bfile}" "${TARGET_SFS}" 2>/dev/null || true
+        ensure_kernel
+        update_unpackfs "${bfile}" "${TARGET_KERNEL}" "squashfs"
+        log "UnpackFS resolution complete (Loop backing file)."
+        exit 0
+    fi
+done < <(losetup -O BACK-FILE -nl 2>/dev/null || true)
+
+# ------------------------------------------------------------------------------
+# Check 3: Search RAM / copytoram candidate paths
+# ------------------------------------------------------------------------------
+log "Checking copytoram / RAM candidate locations..."
+for candidate in \
+    /run/archiso/copytoram/airootfs.sfs \
+    /run/archiso/copytoram/*/airootfs.sfs \
+    /run/initramfs/live/arch/x86_64/airootfs.sfs \
+    /run/initramfs/live/airootfs.sfs; do
+    if [[ -f "${candidate}" ]]; then
+        log "Found copytoram SFS candidate: ${candidate}"
+        mkdir -p "$(dirname "${TARGET_SFS}")"
+        ln -sf "${candidate}" "${TARGET_SFS}" 2>/dev/null || true
+        ensure_kernel
+        update_unpackfs "${candidate}" "${TARGET_KERNEL}" "squashfs"
+        log "UnpackFS resolution complete (copytoram SFS)."
+        exit 0
     fi
 done
 
-exit 0
+# ------------------------------------------------------------------------------
+# Check 4: Probe existing mounts for SFS or ISO files (Ventoy, etc.)
+# ------------------------------------------------------------------------------
+log "Checking currently mounted filesystems for airootfs.sfs or ISO images..."
+while read -r mnt; do
+    [[ -z "${mnt}" || "${mnt}" == "/" || "${mnt}" =~ ^/(proc|sys|dev|run/user) ]] && continue
 
+    if [[ -f "${mnt}/arch/x86_64/airootfs.sfs" ]]; then
+        log "Found airootfs.sfs on mounted path ${mnt}"
+        mkdir -p "$(dirname "${TARGET_SFS}")"
+        ln -sf "${mnt}/arch/x86_64/airootfs.sfs" "${TARGET_SFS}" 2>/dev/null || true
+        ensure_kernel
+        update_unpackfs "${mnt}/arch/x86_64/airootfs.sfs" "${TARGET_KERNEL}" "squashfs"
+        log "UnpackFS resolution complete (Mounted filesystem)."
+        exit 0
+    fi
+
+    # Check for ISO files (Ventoy mounted partition)
+    for isof in "${mnt}"/*.iso "${mnt}"/*/*.iso; do
+        if [[ -f "${isof}" ]]; then
+            log "Found ISO candidate on ${mnt}: ${isof}"
+            mkdir -p /tmp/enerco-iso-test
+            if mount -o loop,ro "${isof}" /tmp/enerco-iso-test 2>/dev/null; then
+                if [[ -f "/tmp/enerco-iso-test/arch/x86_64/airootfs.sfs" ]]; then
+                    umount /tmp/enerco-iso-test 2>/dev/null || true
+                    mkdir -p /run/archiso/bootmnt
+                    mount -o loop,ro "${isof}" /run/archiso/bootmnt 2>/dev/null || true
+                    if [[ -f "${TARGET_SFS}" ]]; then
+                        log "Successfully mounted ISO ${isof} to /run/archiso/bootmnt"
+                        ensure_kernel
+                        update_unpackfs "${TARGET_SFS}" "${TARGET_KERNEL}" "squashfs"
+                        rmdir /tmp/enerco-iso-test 2>/dev/null || true
+                        log "UnpackFS resolution complete (Ventoy mounted ISO)."
+                        exit 0
+                    fi
+                fi
+                umount /tmp/enerco-iso-test 2>/dev/null || true
+            fi
+            rmdir /tmp/enerco-iso-test 2>/dev/null || true
+        fi
+    done
+done < <(findmnt -rno TARGET 2>/dev/null || true)
+
+# ------------------------------------------------------------------------------
+# Check 5: Probe unmounted block devices (Partitions, Ventoy drives, USB sticks)
+# ------------------------------------------------------------------------------
+log "Probing all block devices for Archiso filesystem or ISO images..."
+while read -r bdev; do
+    [[ -z "${bdev}" || ! -b "${bdev}" ]] && continue
+    mountpoint -q "${bdev}" 2>/dev/null && continue
+
+    mkdir -p /tmp/enerco-probe
+    if mount -o ro "${bdev}" /tmp/enerco-probe 2>/dev/null; then
+        if [[ -f "/tmp/enerco-probe/arch/x86_64/airootfs.sfs" ]]; then
+            log "Found airootfs.sfs on block device ${bdev}"
+            umount /tmp/enerco-probe 2>/dev/null || true
+            mkdir -p /run/archiso/bootmnt
+            mount -o ro "${bdev}" /run/archiso/bootmnt 2>/dev/null || true
+            rmdir /tmp/enerco-probe 2>/dev/null || true
+            if [[ -f "${TARGET_SFS}" ]]; then
+                ensure_kernel
+                update_unpackfs "${TARGET_SFS}" "${TARGET_KERNEL}" "squashfs"
+                log "UnpackFS resolution complete (Unmounted block device)."
+                exit 0
+            fi
+        fi
+
+        # Probe for ISO file inside this block device (e.g. unmounted Ventoy partition)
+        for isof in /tmp/enerco-probe/*.iso /tmp/enerco-probe/*/*.iso; do
+            if [[ -f "${isof}" ]]; then
+                log "Testing ISO on ${bdev}: ${isof}"
+                mkdir -p /tmp/enerco-iso-probe
+                if mount -o loop,ro "${isof}" /tmp/enerco-iso-probe 2>/dev/null; then
+                    if [[ -f "/tmp/enerco-iso-probe/arch/x86_64/airootfs.sfs" ]]; then
+                        umount /tmp/enerco-iso-probe 2>/dev/null || true
+                        mkdir -p /mnt/enerco-boot-device
+                        mount -o ro "${bdev}" /mnt/enerco-boot-device 2>/dev/null || true
+                        rel_iso="${isof#/tmp/enerco-probe}"
+                        mkdir -p /run/archiso/bootmnt
+                        mount -o loop,ro "/mnt/enerco-boot-device${rel_iso}" /run/archiso/bootmnt 2>/dev/null || true
+                        umount /tmp/enerco-probe 2>/dev/null || true
+                        rmdir /tmp/enerco-probe /tmp/enerco-iso-probe 2>/dev/null || true
+                        if [[ -f "${TARGET_SFS}" ]]; then
+                            log "Successfully mounted nested ISO to /run/archiso/bootmnt"
+                            ensure_kernel
+                            update_unpackfs "${TARGET_SFS}" "${TARGET_KERNEL}" "squashfs"
+                            log "UnpackFS resolution complete (Nested ISO on block device)."
+                            exit 0
+                        fi
+                    fi
+                    umount /tmp/enerco-iso-probe 2>/dev/null || true
+                fi
+                rmdir /tmp/enerco-iso-probe 2>/dev/null || true
+            fi
+        done
+        umount /tmp/enerco-probe 2>/dev/null || true
+    fi
+    rmdir /tmp/enerco-probe 2>/dev/null || true
+done < <(lsblk -lpno NAME 2>/dev/null || true)
+
+# ------------------------------------------------------------------------------
+# Check 6: Global search across /run, /mnt, /media
+# ------------------------------------------------------------------------------
+log "Searching filesystem recursively for airootfs.sfs..."
+FOUND_SFS="$(find /run /mnt /media -maxdepth 6 -name "airootfs.sfs" 2>/dev/null | head -n 1 || true)"
+if [[ -n "${FOUND_SFS}" && -f "${FOUND_SFS}" ]]; then
+    log "Located airootfs.sfs via deep search at ${FOUND_SFS}"
+    mkdir -p "$(dirname "${TARGET_SFS}")"
+    ln -sf "${FOUND_SFS}" "${TARGET_SFS}" 2>/dev/null || true
+    ensure_kernel
+    update_unpackfs "${FOUND_SFS}" "${TARGET_KERNEL}" "squashfs"
+    log "UnpackFS resolution complete (Deep search SFS)."
+    exit 0
+fi
+
+# ------------------------------------------------------------------------------
+# Check 7: Fail-safe live root directory fallback (/run/archiso/airootfs)
+# ------------------------------------------------------------------------------
+if [[ -d "/run/archiso/airootfs" ]]; then
+    log "Using live root directory /run/archiso/airootfs as unpackfs source (fail-safe mode)"
+    ensure_kernel
+    local_krnl="${TARGET_KERNEL}"
+    if [[ ! -f "${local_krnl}" ]]; then
+        local_krnl="/boot/vmlinuz-linux"
+    fi
+    update_unpackfs "/run/archiso/airootfs" "${local_krnl}" "file"
+    log "UnpackFS resolution complete (Live rootfs directory fail-safe)."
+    exit 0
+fi
+
+log "Warning: UnpackFS source resolver reached end without finding a matching source"
+exit 0

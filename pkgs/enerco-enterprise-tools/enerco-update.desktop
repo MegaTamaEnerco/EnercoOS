@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Software Update
+GenericName=System Updater
+Comment=Check and install updates for EnercoOS
+Exec=/usr/local/bin/enerco-update
+Icon=system-software-update
+Terminal=false
+Categories=System;Settings;PackageManager;
+Keywords=update;upgrade;software;system;macshell;
+StartupNotify=true
+StartupWMClass=Software Update

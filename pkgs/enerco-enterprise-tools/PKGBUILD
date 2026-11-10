@@ -1,7 +1,7 @@
 # Maintainer: PT Mega Tama Enerco <devops@enerco.internal>
 pkgname=enerco-enterprise-tools
 pkgver=1.0.0
-pkgrel=18
+pkgrel=20
 pkgdesc="Enterprise tooling, session initialization, MTERP launcher, and CachyOS-grade performance tuning for EnercoOS"
 arch=('any')
 url="https://org.megatama-enerco.com"
@@ -12,7 +12,11 @@ source=(
     "enerco-lockdown"
     "enerco-welcome"
     "enerco-installer"
+    "enerco-update"
+    "enerco-update.desktop"
     "enerco-prepare-unpackfs"
+    "enerco-prepare-unpackfs.service"
+    "calamares"
     "enerco-apple-menu"
     "enerco-control-center"
     "enerco-mterp"
@@ -29,7 +33,7 @@ source=(
     "00-journal-size.conf"
     "20-audio.conf"
 )
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 package() {
     # Binaries and session wrappers
@@ -37,14 +41,20 @@ package() {
     install -Dm755 "${srcdir}/enerco-lockdown" "${pkgdir}/usr/local/bin/enerco-lockdown"
     install -Dm755 "${srcdir}/enerco-welcome" "${pkgdir}/usr/local/bin/enerco-welcome"
     install -Dm755 "${srcdir}/enerco-installer" "${pkgdir}/usr/local/bin/enerco-installer"
+    install -Dm755 "${srcdir}/enerco-update" "${pkgdir}/usr/local/bin/enerco-update"
     install -Dm755 "${srcdir}/enerco-prepare-unpackfs" "${pkgdir}/usr/local/bin/enerco-prepare-unpackfs"
+    install -Dm755 "${srcdir}/calamares" "${pkgdir}/usr/local/bin/calamares"
     install -Dm755 "${srcdir}/enerco-apple-menu" "${pkgdir}/usr/local/bin/enerco-apple-menu"
     install -Dm755 "${srcdir}/enerco-control-center" "${pkgdir}/usr/local/bin/enerco-control-center"
     install -Dm755 "${srcdir}/enerco-mterp" "${pkgdir}/usr/local/bin/enerco-mterp"
 
+    # Services
+    install -Dm644 "${srcdir}/enerco-prepare-unpackfs.service" "${pkgdir}/usr/lib/systemd/system/enerco-prepare-unpackfs.service"
+
     # Enterprise application launcher
     install -Dm644 "${srcdir}/mterp.desktop" "${pkgdir}/usr/share/applications/mterp.desktop"
     install -Dm755 "${srcdir}/mterp.desktop" "${pkgdir}/etc/skel/Desktop/mterp.desktop"
+    install -Dm644 "${srcdir}/enerco-update.desktop" "${pkgdir}/usr/share/applications/enerco-update.desktop"
 
     # Kernel Hardening & CachyOS-Grade Performance Tuning
     install -Dm644 "${srcdir}/sysctl-enerco-security.conf" "${pkgdir}/etc/sysctl.d/90-enerco-security.conf"
